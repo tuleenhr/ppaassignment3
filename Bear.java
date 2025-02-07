@@ -9,47 +9,50 @@ import java.util.Random;
  * @author David J. Barnes and Michael Kölling
  * @version 7.1
  */
-public class Fox extends Animal
+public class Bear extends Animal
 {
-    // Characteristics shared by all foxes (class variables).
-    // The age at which a fox can start to breed.
+    // Characteristics shared by all bears (class variables).
+    // The age at which a bear can start to breed.
     private static final int BREEDING_AGE = 15;
-    // The age to which a fox can live.
+    // The age to which a bear can live.
     private static final int MAX_AGE = 150;
-    // The likelihood of a fox breeding.
+    // The likelihood of a bear breeding.
     private static final double BREEDING_PROBABILITY = 0.08;
     // The maximum number of births.
     private static final int MAX_LITTER_SIZE = 2;
-    // The food value of a single rabbit. In effect, this is the
-    // number of steps a fox can go before it has to eat again.
-    private static final int RABBIT_FOOD_VALUE = 9;
+    // The food value of a single prey. In effect, this is the
+    // number of steps a bear can go before it has to eat again.
+    private static final int DEER_FOOD_VALUE = 9;
+    private static final int MOUSE_FOOD_VALUE = 4;
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
     
     // Individual characteristics (instance fields).
 
-    // The fox's age.
+    // The bears's age.
     private int age;
-    // The fox's food level, which is increased by eating rabbits.
+    // The bears's food level, which is increased by eating rabbits.
     private int foodLevel;
 
     /**
-     * Create a fox. A fox can be created as a new born (age zero
+     * Create a bear. A bear can be created as a new born (age zero
      * and not hungry) or with a random age and food level.
      * 
-     * @param randomAge If true, the fox will have random age and hunger level.
+     * @param randomAge If true, the bear will have random age and hunger level.
      * @param location The location within the field.
      */
-    public Fox(boolean randomAge, Location location)
-    {
-        super(location);
+     public Bear(boolean randomAge, Location location) {
+        super(location, randomAge);
+        age = 0;
         if(randomAge) {
             age = rand.nextInt(MAX_AGE);
+            // Random food level between mouse and deer food values
+            foodLevel = MOUSE_FOOD_VALUE + rand.nextInt(DEER_FOOD_VALUE - MOUSE_FOOD_VALUE + 1);
         }
         else {
-            age = 0;
+            // New bears start with mouse food value (smaller amount)
+            foodLevel = MOUSE_FOOD_VALUE;
         }
-        foodLevel = rand.nextInt(RABBIT_FOOD_VALUE);
     }
     
     /**
@@ -63,44 +66,49 @@ public class Fox extends Animal
     {
         incrementAge();
         incrementHunger();
+        
         if(isAlive()) {
-            List<Location> freeLocations =
-                    nextFieldState.getFreeAdjacentLocations(getLocation());
-            if(! freeLocations.isEmpty()) {
-                giveBirth(nextFieldState, freeLocations);
+            // Bears are most active at dawn and dusk
+            int hour = getTimeOfDay();
+            boolean isDawnOrDusk = (hour >= 5 && hour <= 8) || (hour >= 17 && hour <= 20);
+            
+            if(!isDawnOrDusk) {
+                // 60% chance to rest during other times
+                if(rand.nextDouble() < 0.6) {
+                    return;
+                }
             }
-            // Move towards a source of food if found.
+            
+            List<Location> freeLocations = nextFieldState.getFreeAdjacentLocations(getLocation());
+            
             Location nextLocation = findFood(currentField);
-            if(nextLocation == null && ! freeLocations.isEmpty()) {
-                // No food found - try to move to a free location.
-                nextLocation = freeLocations.remove(0);
+            
+            // Check breeding only if well-fed
+            if(foodLevel >= DEER_FOOD_VALUE/2 && !freeLocations.isEmpty()) {
+                if(canBreed() && canFindMate(currentField)) {
+                    giveBirth(nextFieldState, freeLocations);
+                }
             }
-            // See if it was possible to move.
-            if(nextLocation != null) {
-                setLocation(nextLocation);
-                nextFieldState.placeAnimal(this, nextLocation);
+            
+            // Try to find food and move towards it or to a random location
+            Location foodLocation = findFood(currentField);
+            Location newLocation = foodLocation;
+            if(newLocation == null && !freeLocations.isEmpty()) {
+                newLocation = freeLocations.get(0);
+            }
+            
+            if(newLocation != null) {
+                setLocation(newLocation);
+                nextFieldState.placeAnimal(this, newLocation);
             }
             else {
-                // Overcrowding.
                 setDead();
             }
         }
     }
 
-
-
-    @Override
-    public String toString() {
-        return "Fox{" +
-                "age=" + age +
-                ", alive=" + isAlive() +
-                ", location=" + getLocation() +
-                ", foodLevel=" + foodLevel +
-                '}';
-    }
-
     /**
-     * Increase the age. This could result in the fox's death.
+     * Increase the age. This could result in the bears's death.
      */
     private void incrementAge()
     {
@@ -111,7 +119,7 @@ public class Fox extends Animal
     }
     
     /**
-     * Make this fox more hungry. This could result in the fox's death.
+     * Make this fox more hungry. This could result in the bears's death.
      */
     private void incrementHunger()
     {
@@ -122,8 +130,8 @@ public class Fox extends Animal
     }
     
     /**
-     * Look for rabbits adjacent to the current location.
-     * Only the first live rabbit is eaten.
+     * Look for mice or deer adjacent to the current location.
+     * Only the first live prey is eaten.
      * @param field The field currently occupied.
      * @return Where food was found, or null if it wasn't.
      */
@@ -131,19 +139,22 @@ public class Fox extends Animal
     {
         List<Location> adjacent = field.getAdjacentLocations(getLocation());
         Iterator<Location> it = adjacent.iterator();
-        Location foodLocation = null;
-        while(foodLocation == null && it.hasNext()) {
-            Location loc = it.next();
-            Animal animal = field.getAnimalAt(loc);
-            if(animal instanceof Rabbit rabbit) {
-                if(rabbit.isAlive()) {
-                    rabbit.setDead();
-                    foodLevel = RABBIT_FOOD_VALUE;
-                    foodLocation = loc;
-                }
+        while(it.hasNext()) {
+            Location where = it.next();
+            Animal animal = field.getAnimalAt(where);
+            
+            if(animal instanceof Deer && animal.isAlive()) {
+                animal.setDead();
+                foodLevel = DEER_FOOD_VALUE;
+                return where;
+            }
+            else if(animal instanceof Mouse && animal.isAlive()) {
+                animal.setDead();
+                foodLevel = MOUSE_FOOD_VALUE;
+                return where;
             }
         }
-        return foodLocation;
+        return null;
     }
     
     /**
@@ -159,7 +170,7 @@ public class Fox extends Animal
         if(births > 0) {
             for (int b = 0; b < births && ! freeLocations.isEmpty(); b++) {
                 Location loc = freeLocations.remove(0);
-                Fox young = new Fox(false, loc);
+                Bear young = new Bear(false, loc);
                 nextFieldState.placeAnimal(young, loc);
             }
         }

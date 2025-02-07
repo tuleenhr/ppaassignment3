@@ -1,3 +1,5 @@
+import java.util.List;
+import java.util.Random;
 
 /**
  * Common elements of foxes and rabbits.
@@ -11,15 +13,40 @@ public abstract class Animal
     private boolean alive;
     // The animal's position.
     private Location location;
+    
+    private final boolean isMale;
+    
+    private static int timeOfDay = 0;
 
     /**
      * Constructor for objects of class Animal.
      * @param location The animal's location.
+     * @param randomize A boolean to determine random gender assignment
      */
-    public Animal(Location location)
-    {
+    public Animal(Location location, boolean randomize) {
         this.alive = true;
         this.location = location;
+        if (randomize) {
+            this.isMale = Randomizer.getRandom().nextBoolean();
+        } else {
+            this.isMale = false; // Default to female if not randomized
+        }
+    }
+    
+    public boolean isMale() {
+        return isMale;
+    }
+    
+    public static int getTimeOfDay() {
+        return timeOfDay;
+    }
+    
+    public static void advanceTime() {
+        timeOfDay = (timeOfDay + 1) % 24;
+    }
+    
+    public static boolean isDaytime() {
+        return timeOfDay >= 6 && timeOfDay < 18;
     }
     
     /**
@@ -63,5 +90,18 @@ public abstract class Animal
     protected void setLocation(Location location)
     {
         this.location = location;
+    }
+    
+    protected boolean canFindMate(Field field) {
+        List<Location> adjacent = field.getAdjacentLocations(getLocation());
+        for (Location loc : adjacent) {
+            Animal animal = field.getAnimalAt(loc);
+            if (animal != null && animal.isAlive() && 
+                animal.getClass() == this.getClass() && 
+                animal.isMale() != this.isMale()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
