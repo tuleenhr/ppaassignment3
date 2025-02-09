@@ -8,15 +8,14 @@ import java.util.Iterator;
  * @author David J. Barnes and Michael Kölling
  * @version 7.1
  */
-public class Bear extends Animal
+public class Mouse extends Animal
 {
-     // Characteristics shared by all bears (class variables)
-    private static final int BREEDING_AGE = 15;
-    private static final int MAX_AGE = 150;
-    private static final double BREEDING_PROBABILITY = 0.08;
-    private static final int MAX_LITTER_SIZE = 2;
-    private static final int DEER_FOOD_VALUE = 9;
-    private static final int MOUSE_FOOD_VALUE = 4;
+     // Characteristics shared by all mice (class variables)
+    private static final int BREEDING_AGE = 2;
+    private static final int MAX_AGE = 20;
+    private static final double BREEDING_PROBABILITY = 0.20;
+    private static final int MAX_LITTER_SIZE = 6;
+    private static final int BERRY_FOOD_VALUE = 5;
 
     /**
      * Create a bear. A bear can be created as a new born (age zero
@@ -25,7 +24,7 @@ public class Bear extends Animal
      * @param randomAge If true, the bear will have random age and hunger level.
      * @param location The location within the field.
      */
-     public Bear(boolean randomAge, Location location) {
+     public Mouse(boolean randomAge, Location location) {
         super(location, randomAge);
     }
     
@@ -40,20 +39,29 @@ public class Bear extends Animal
         List<Location> adjacent = field.getAdjacentLocations(getLocation());
         Iterator<Location> it = adjacent.iterator();
         
+        // First, check if there are any predators nearby
+        boolean dangerNearby = false;
+        for(Location loc : adjacent) {
+            Animal animal = field.getAnimalAt(loc);
+            if(animal instanceof Bear || animal instanceof Owl || animal instanceof Snake) {
+                dangerNearby = true;
+                break;
+            }
+        }
+        
+        // If danger is nearby, mice might skip eating to move to safety
+        if(dangerNearby && getFoodLevel() > BERRY_FOOD_VALUE/2) {
+            return null;
+        }
+        
+        // Look for food if hungry enough or no danger
         while(it.hasNext()) {
             Location where = it.next();
-            Animal animal = field.getAnimalAt(where);
+            Plant plant = field.getPlantAt(where);
             
-            // Try to find a deer first (more food value)
-            if(animal instanceof Deer && animal.isAlive()) {
-                animal.setDead();
-                setFoodLevel(DEER_FOOD_VALUE);
-                return where;
-            }
-            // If no deer found, try to find a mouse
-            else if(animal instanceof Mouse && animal.isAlive()) {
-                animal.setDead();
-                setFoodLevel(MOUSE_FOOD_VALUE);
+            if(plant instanceof Berry && plant.isAlive()) {
+                plant.setDead();
+                setFoodLevel(BERRY_FOOD_VALUE);
                 return where;
             }
         }
@@ -68,7 +76,7 @@ public class Bear extends Animal
      */
     @Override
     protected void createYoung(boolean randomAge, Location location, Field field) {
-        Bear young = new Bear(randomAge, location);
+        Mouse young = new Mouse(randomAge, location);
         field.placeAnimal(young, location);
     }
     
@@ -95,20 +103,17 @@ public class Bear extends Animal
     
     @Override
     protected int getMaxFoodValue() {
-        return DEER_FOOD_VALUE;  // Maximum food value from eating a deer
+        return BERRY_FOOD_VALUE;  // Maximum food value from eating a deer
     }
     
-      @Override
+    @Override
     protected int getInitialFoodLevel() {
-        // Random value between mouse and deer food values
-        return MOUSE_FOOD_VALUE + Randomizer.getRandom().nextInt(DEER_FOOD_VALUE - MOUSE_FOOD_VALUE + 1);
+        return BERRY_FOOD_VALUE;
     }
     
     @Override
     protected boolean isActiveTime() {
-        int hour = getTimeOfDay();
-        // Bears are most active at dawn (5-8) and dusk (17-20)
-        return (hour >= 5 && hour <= 8) || (hour >= 17 && hour <= 20);
+        return !isDaytime(); // Mice are nocturnal
     }
     
     @Override

@@ -14,11 +14,16 @@ public class Simulator
     private static final int DEFAULT_WIDTH = 120;
     // The default depth of the grid.
     private static final int DEFAULT_DEPTH = 80;
-    // The probability that a fox will be created in any given grid position.
-    private static final double FOX_CREATION_PROBABILITY = 0.02;
-    // The probability that a rabbit will be created in any given position.
-    private static final double RABBIT_CREATION_PROBABILITY = 0.08;    
-
+   
+    // Constants for creation probabilities
+    private static final double BEAR_CREATION_PROBABILITY = 0.02;
+    private static final double OWL_CREATION_PROBABILITY = 0.03;
+    private static final double SNAKE_CREATION_PROBABILITY = 0.03;
+    private static final double MOUSE_CREATION_PROBABILITY = 0.08;
+    private static final double DEER_CREATION_PROBABILITY = 0.06;
+    private static final double BERRY_CREATION_PROBABILITY = 0.09;
+    private static final double GRASS_CREATION_PROBABILITY = 0.12;
+    
     // The current state of the field.
     private Field field;
     // The current step of the simulation.
@@ -68,12 +73,10 @@ public class Simulator
      * Stop before the given number of steps if it ceases to be viable.
      * @param numSteps The number of steps to run for.
      */
-    public void simulate(int numSteps)
-    {
-        reportStats();
-        for(int n = 1; n <= numSteps && field.isViable(); n++) {
+    public void simulate(int numSteps) {
+        for(int step = 1; step <= numSteps && view.isViable(field); step++) {
             simulateOneStep();
-            delay(50);         // adjust this to change execution speed
+            delay(50);  // adjust this to change simulation speed
         }
     }
     
@@ -84,19 +87,30 @@ public class Simulator
     public void simulateOneStep()
     {
         step++;
-        // Use a separate Field to store the starting state of
-        // the next step.
-        Field nextFieldState = new Field(field.getDepth(), field.getWidth());
 
-        List<Animal> animals = field.getAnimals();
-        for (Animal anAnimal : animals) {
-            anAnimal.act(field, nextFieldState);
+        // Provide space for newborn animals.
+        Field nextField = new Field(field.getDepth(), field.getWidth());
+        
+        // Update all animals
+        for(Animal animal : field.getAnimals()) {
+            if(animal.isAlive()) {
+                animal.act(field, nextField);
+            }
         }
         
+        // Update all plants
+        for(Plant plant : field.getPlants()) {
+            if(plant.isAlive()) {
+                plant.act(field, nextField);
+            }
+        }
+        
+        // Update time of day
+        Animal.advanceTime();        
+        
         // Replace the old state with the new one.
-        field = nextFieldState;
-
-        reportStats();
+        field = nextField;
+        
         view.showStatus(step, field);
     }
         
@@ -117,32 +131,37 @@ public class Simulator
     {
         Random rand = Randomizer.getRandom();
         field.clear();
+        
         for(int row = 0; row < field.getDepth(); row++) {
             for(int col = 0; col < field.getWidth(); col++) {
-                if(rand.nextDouble() <= FOX_CREATION_PROBABILITY) {
-                    Location location = new Location(row, col);
-                    Fox fox = new Fox(true, location);
-                    field.placeAnimal(fox, location);
+                Location location = new Location(row, col);
+                double chance = rand.nextDouble();  // Generate one random number for this location
+                
+                if(chance <= BEAR_CREATION_PROBABILITY) {
+                    field.placeAnimal(new Bear(true, location), location);
                 }
-                else if(rand.nextDouble() <= RABBIT_CREATION_PROBABILITY) {
-                    Location location = new Location(row, col);
-                    Rabbit rabbit = new Rabbit(true, location);
-                    field.placeAnimal(rabbit, location);
+                else if(chance <= BEAR_CREATION_PROBABILITY + OWL_CREATION_PROBABILITY) {
+                    field.placeAnimal(new Owl(true, location), location);
                 }
-                // else leave the location empty.
+                else if(chance <= BEAR_CREATION_PROBABILITY + OWL_CREATION_PROBABILITY + SNAKE_CREATION_PROBABILITY) {
+                    field.placeAnimal(new Snake(true, location), location);
+                }
+                else if(chance <= BEAR_CREATION_PROBABILITY + OWL_CREATION_PROBABILITY + SNAKE_CREATION_PROBABILITY + MOUSE_CREATION_PROBABILITY) {
+                    field.placeAnimal(new Mouse(true, location), location);
+                }
+                else if(chance <= BEAR_CREATION_PROBABILITY + OWL_CREATION_PROBABILITY + SNAKE_CREATION_PROBABILITY + MOUSE_CREATION_PROBABILITY + DEER_CREATION_PROBABILITY) {
+                    field.placeAnimal(new Deer(true, location), location);
+                }
+                else if(chance <= BEAR_CREATION_PROBABILITY + OWL_CREATION_PROBABILITY + SNAKE_CREATION_PROBABILITY + MOUSE_CREATION_PROBABILITY + DEER_CREATION_PROBABILITY + BERRY_CREATION_PROBABILITY) {
+                    field.placePlant(new Berry(location, true), location);
+                }
+                else if(chance <= BEAR_CREATION_PROBABILITY + OWL_CREATION_PROBABILITY + SNAKE_CREATION_PROBABILITY + MOUSE_CREATION_PROBABILITY + DEER_CREATION_PROBABILITY + BERRY_CREATION_PROBABILITY + GRASS_CREATION_PROBABILITY) {
+                    field.placePlant(new Grass(location, true), location);
+                }
             }
         }
     }
 
-    /**
-     * Report on the number of each type of animal in the field.
-     */
-    public void reportStats()
-    {
-        //System.out.print("Step: " + step + " ");
-        field.fieldStats();
-    }
-    
     /**
      * Pause for a given time.
      * @param milliseconds The time to pause for, in milliseconds
@@ -150,7 +169,7 @@ public class Simulator
     private void delay(int milliseconds)
     {
         try {
-            Thread.sleep(milliseconds);
+             Thread.sleep(milliseconds);
         }
         catch(InterruptedException e) {
             // ignore

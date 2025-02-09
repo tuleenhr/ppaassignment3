@@ -8,15 +8,15 @@ import java.util.Iterator;
  * @author David J. Barnes and Michael Kölling
  * @version 7.1
  */
-public class Bear extends Animal
+public class Deer extends Animal
 {
-     // Characteristics shared by all bears (class variables)
-    private static final int BREEDING_AGE = 15;
-    private static final int MAX_AGE = 150;
-    private static final double BREEDING_PROBABILITY = 0.08;
+     // Characteristics shared by all deer (class variables)
+    private static final int BREEDING_AGE = 5;
+    private static final int MAX_AGE = 40;
+    private static final double BREEDING_PROBABILITY = 0.15;
     private static final int MAX_LITTER_SIZE = 2;
-    private static final int DEER_FOOD_VALUE = 9;
-    private static final int MOUSE_FOOD_VALUE = 4;
+    private static final int GRASS_FOOD_VALUE = 6;
+    private static final int BERRY_FOOD_VALUE = 4;  // Berries provide less food than grass
 
     /**
      * Create a bear. A bear can be created as a new born (age zero
@@ -25,7 +25,7 @@ public class Bear extends Animal
      * @param randomAge If true, the bear will have random age and hunger level.
      * @param location The location within the field.
      */
-     public Bear(boolean randomAge, Location location) {
+     public Deer(boolean randomAge, Location location) {
         super(location, randomAge);
     }
     
@@ -40,23 +40,46 @@ public class Bear extends Animal
         List<Location> adjacent = field.getAdjacentLocations(getLocation());
         Iterator<Location> it = adjacent.iterator();
         
+        // First, check if there are any predators nearby
+        boolean bearNearby = false;
+        for(Location loc : adjacent) {
+            Animal animal = field.getAnimalAt(loc);
+            if(animal instanceof Bear) {
+                bearNearby = true;
+                break;
+            }
+        }
+        
+        // If a bear is nearby, skip eating unless very hungry
+        if(bearNearby && getFoodLevel() > GRASS_FOOD_VALUE/2) {
+            return null;
+        }
+        
+        // First try to find grass (preferred food)
         while(it.hasNext()) {
             Location where = it.next();
-            Animal animal = field.getAnimalAt(where);
+            Plant plant = field.getPlantAt(where);
             
-            // Try to find a deer first (more food value)
-            if(animal instanceof Deer && animal.isAlive()) {
-                animal.setDead();
-                setFoodLevel(DEER_FOOD_VALUE);
-                return where;
-            }
-            // If no deer found, try to find a mouse
-            else if(animal instanceof Mouse && animal.isAlive()) {
-                animal.setDead();
-                setFoodLevel(MOUSE_FOOD_VALUE);
+            if(plant instanceof Grass && plant.isAlive()) {
+                plant.setDead();
+                setFoodLevel(GRASS_FOOD_VALUE);
                 return where;
             }
         }
+        
+        // If no grass found, look for berries
+        it = adjacent.iterator();  // Reset iterator
+        while(it.hasNext()) {
+            Location where = it.next();
+            Plant plant = field.getPlantAt(where);
+            
+            if(plant instanceof Berry && plant.isAlive()) {
+                plant.setDead();
+                setFoodLevel(BERRY_FOOD_VALUE);
+                return where;
+            }
+        }
+        
         return null;
     }
     
@@ -68,7 +91,7 @@ public class Bear extends Animal
      */
     @Override
     protected void createYoung(boolean randomAge, Location location, Field field) {
-        Bear young = new Bear(randomAge, location);
+        Deer young = new Deer(randomAge, location);
         field.placeAnimal(young, location);
     }
     
@@ -95,25 +118,23 @@ public class Bear extends Animal
     
     @Override
     protected int getMaxFoodValue() {
-        return DEER_FOOD_VALUE;  // Maximum food value from eating a deer
+        return GRASS_FOOD_VALUE;  // Maximum food value from eating a deer
     }
     
-      @Override
+    @Override
     protected int getInitialFoodLevel() {
-        // Random value between mouse and deer food values
-        return MOUSE_FOOD_VALUE + Randomizer.getRandom().nextInt(DEER_FOOD_VALUE - MOUSE_FOOD_VALUE + 1);
+        return GRASS_FOOD_VALUE;
     }
     
     @Override
     protected boolean isActiveTime() {
-        int hour = getTimeOfDay();
-        // Bears are most active at dawn (5-8) and dusk (17-20)
-        return (hour >= 5 && hour <= 8) || (hour >= 17 && hour <= 20);
-    }
+    int hour = getTimeOfDay();
+    // Deers are most active at dawn (5-8) and dusk (17-20)
+    return (hour >= 5 && hour <= 8) || (hour >= 17 && hour <= 20);    }
     
     @Override
     protected double getRestingProbability() {
-        return 0.6;  // 60% chance to rest during non-active hours
+        return 0.5;  // 50% chance to rest during non-active hours
     }
     
 }

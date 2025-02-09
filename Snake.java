@@ -8,15 +8,14 @@ import java.util.Iterator;
  * @author David J. Barnes and Michael Kölling
  * @version 7.1
  */
-public class Bear extends Animal
+public class Snake extends Animal
 {
-     // Characteristics shared by all bears (class variables)
-    private static final int BREEDING_AGE = 15;
-    private static final int MAX_AGE = 150;
-    private static final double BREEDING_PROBABILITY = 0.08;
-    private static final int MAX_LITTER_SIZE = 2;
-    private static final int DEER_FOOD_VALUE = 9;
-    private static final int MOUSE_FOOD_VALUE = 4;
+    // Characteristics shared by all snakes (class variables)
+    private static final int BREEDING_AGE = 8;
+    private static final int MAX_AGE = 80;
+    private static final double BREEDING_PROBABILITY = 0.12;
+    private static final int MAX_LITTER_SIZE = 4;
+    private static final int MOUSE_FOOD_VALUE = 5;
 
     /**
      * Create a bear. A bear can be created as a new born (age zero
@@ -25,7 +24,7 @@ public class Bear extends Animal
      * @param randomAge If true, the bear will have random age and hunger level.
      * @param location The location within the field.
      */
-     public Bear(boolean randomAge, Location location) {
+     public Snake(boolean randomAge, Location location) {
         super(location, randomAge);
     }
     
@@ -44,14 +43,7 @@ public class Bear extends Animal
             Location where = it.next();
             Animal animal = field.getAnimalAt(where);
             
-            // Try to find a deer first (more food value)
-            if(animal instanceof Deer && animal.isAlive()) {
-                animal.setDead();
-                setFoodLevel(DEER_FOOD_VALUE);
-                return where;
-            }
-            // If no deer found, try to find a mouse
-            else if(animal instanceof Mouse && animal.isAlive()) {
+            if(animal instanceof Mouse && animal.isAlive()) {
                 animal.setDead();
                 setFoodLevel(MOUSE_FOOD_VALUE);
                 return where;
@@ -68,7 +60,7 @@ public class Bear extends Animal
      */
     @Override
     protected void createYoung(boolean randomAge, Location location, Field field) {
-        Bear young = new Bear(randomAge, location);
+        Snake young = new Snake(randomAge, location);
         field.placeAnimal(young, location);
     }
     
@@ -95,25 +87,23 @@ public class Bear extends Animal
     
     @Override
     protected int getMaxFoodValue() {
-        return DEER_FOOD_VALUE;  // Maximum food value from eating a deer
+        return MOUSE_FOOD_VALUE;  // Maximum food value from eating a deer
     }
     
       @Override
     protected int getInitialFoodLevel() {
-        // Random value between mouse and deer food values
-        return MOUSE_FOOD_VALUE + Randomizer.getRandom().nextInt(DEER_FOOD_VALUE - MOUSE_FOOD_VALUE + 1);
+        // Random value between mouse food values
+        return MOUSE_FOOD_VALUE;
     }
     
     @Override
     protected boolean isActiveTime() {
-        int hour = getTimeOfDay();
-        // Bears are most active at dawn (5-8) and dusk (17-20)
-        return (hour >= 5 && hour <= 8) || (hour >= 17 && hour <= 20);
+        return isDaytime(); // Snakes are active during the day
     }
     
     @Override
     protected double getRestingProbability() {
-        return 0.6;  // 60% chance to rest during non-active hours
+        return 0.7;  // 70% chance to rest during non-active hours
     }
     
 }

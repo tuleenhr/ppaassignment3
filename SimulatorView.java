@@ -41,10 +41,19 @@ public class SimulatorView extends JFrame
     {
         stats = new FieldStats();
         colors = new LinkedHashMap<>();
-        setColor(Rabbit.class, Color.orange);
-        setColor(Fox.class, Color.blue);
+        
+        // Animals
+        setColor(Bear.class, new Color(139, 69, 19));      // Saddle Brown for Bear
+        setColor(Owl.class, new Color(128, 128, 128));     // Gray for Owl
+        setColor(Snake.class, new Color(50, 205, 50));     // Lime Green for Snake
+        setColor(Deer.class, new Color(205, 133, 63));     // Peru (light brown) for Deer
+        setColor(Mouse.class, new Color(255, 215, 0));     // Gold for Mouse - much brighter
 
-        setTitle("Fox and Rabbit Simulation");
+        // Plants
+        setColor(Berry.class, new Color(148, 0, 211));     // Dark Violet for Berry
+        setColor(Grass.class, new Color(0, 100, 0));       // Dark Green for Grass
+
+        setTitle("Predator/Prey Simulation");
         stepLabel = new JLabel(STEP_PREFIX, JLabel.CENTER);
         population = new JLabel(POPULATION_PREFIX, JLabel.CENTER);
         
@@ -103,10 +112,17 @@ public class SimulatorView extends JFrame
 
         for(int row = 0; row < field.getDepth(); row++) {
             for(int col = 0; col < field.getWidth(); col++) {
-                Object animal = field.getAnimalAt(new Location(row, col));
+                Location location = new Location(row, col);
+                Animal animal = field.getAnimalAt(location);
+                Plant plant = field.getPlantAt(location);
+                
                 if(animal != null) {
                     stats.incrementCount(animal.getClass());
                     fieldView.drawMark(col, row, getColor(animal.getClass()));
+                }
+                else if(plant != null) {
+                    stats.incrementCount(plant.getClass());
+                    fieldView.drawMark(col, row, getColor(plant.getClass()));
                 }
                 else {
                     fieldView.drawMark(col, row, EMPTY_COLOR);

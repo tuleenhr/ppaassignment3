@@ -9,15 +9,15 @@ import java.util.Random;
  */
 public abstract class Animal
 {
+    private static final Random rand = Randomizer.getRandom();
+    private static int timeOfDay = 0;
     // Whether the animal is alive or not.
     private boolean alive;
     // The animal's position.
     private Location location;
-    
     private final boolean isMale;
-    
-    private static int timeOfDay = 0;
-
+    private int age;
+    private int foodLevel;
     /**
      * Constructor for objects of class Animal.
      * @param location The animal's location.
@@ -26,27 +26,19 @@ public abstract class Animal
     public Animal(Location location, boolean randomize) {
         this.alive = true;
         this.location = location;
+        this.age = 0;
         if (randomize) {
             this.isMale = Randomizer.getRandom().nextBoolean();
         } else {
             this.isMale = false; // Default to female if not randomized
         }
-    }
-    
-    public boolean isMale() {
-        return isMale;
-    }
-    
-    public static int getTimeOfDay() {
-        return timeOfDay;
-    }
-    
-    public static void advanceTime() {
-        timeOfDay = (timeOfDay + 1) % 24;
-    }
-    
-    public static boolean isDaytime() {
-        return timeOfDay >= 6 && timeOfDay < 18;
+        if(randomize) {
+            this.age = rand.nextInt(getMaxAge());
+            this.foodLevel = getInitialFoodLevel();
+        }
+        else {
+            this.foodLevel = getMaxFoodValue();
+        }
     }
     
     /**
@@ -54,7 +46,44 @@ public abstract class Animal
      * @param currentField The current state of the field.
      * @param nextFieldState The new state being built.
      */
-    abstract public void act(Field currentField, Field nextFieldState);
+    public void act(Field currentField, Field nextFieldState) {
+        incrementAge();
+        incrementHunger();
+        
+        if(isAlive()) {
+            // Check if active based on time of day
+            if(!isActiveTime()) {
+                if(rand.nextDouble() < getRestingProbability()) {
+                    return;  // Rest during inactive period
+                }
+            }
+            
+            // Get possible moves and look for food
+            List<Location> freeLocations = nextFieldState.getFreeAdjacentLocations(getLocation());
+            Location foodLocation = findFood(currentField);
+            
+            // Try to breed if well-fed
+            if(foodLevel >= getMaxFoodValue()/2 && !freeLocations.isEmpty()) {
+                if(canBreed() && canFindMate(currentField)) {
+                    giveBirth(nextFieldState, freeLocations);
+                }
+            }
+            
+            // Move to food or random location
+            Location newLocation = foodLocation;
+            if(newLocation == null && !freeLocations.isEmpty()) {
+                newLocation = freeLocations.get(0);
+            }
+            
+            if(newLocation != null) {
+                setLocation(newLocation);
+                nextFieldState.placeAnimal(this, newLocation);
+            }
+            else {
+                setDead();
+            }
+        }
+    }
     
     /**
      * Check whether the animal is alive or not.
@@ -92,6 +121,51 @@ public abstract class Animal
         this.location = location;
     }
     
+    public boolean isMale() {
+        return isMale;
+    }
+    
+    /**
+     * Make the animal get hungrier.
+     */
+    protected void incrementHunger() {
+        foodLevel--;
+        if(foodLevel <= 0) {
+            setDead();
+        }
+    }
+    
+    /**
+     * Make the animal older.
+     */
+    protected void incrementAge() {
+        age++;
+        if(age > getMaxAge()) {
+            setDead();
+        }
+    }
+    
+    /**
+     * Set the animal's food level.
+     */
+    protected void setFoodLevel(int foodLevel) {
+        this.foodLevel = foodLevel;
+    }
+    
+    /**
+     * Get the animal's current food level.
+     */
+    protected int getFoodLevel() {
+        return foodLevel;
+    }
+    
+    /**
+     * Get the animal's current age.
+     */
+    protected int getAge() {
+        return age;
+    }
+    
     protected boolean canFindMate(Field field) {
         List<Location> adjacent = field.getAdjacentLocations(getLocation());
         for (Location loc : adjacent) {
@@ -104,4 +178,64 @@ public abstract class Animal
         }
         return false;
     }
+    
+    protected void giveBirth(Field nextFieldState, List<Location> freeLocations) {
+        int births = breed();
+        for(int b = 0; b < births && !freeLocations.isEmpty(); b++) {
+            Location loc = freeLocations.remove(0);
+            createYoung(false, loc, nextFieldState);
+        }
+    }
+    
+    /**
+     * Generate a birth number.
+     */
+    private int breed() {
+        int births = 0;
+        if(canBreed() && rand.nextDouble() <= getBreedingProbability()) {
+            births = rand.nextInt(getMaxLitterSize()) + 1;
+        }
+        return births;
+    }
+    
+    /**
+     * Check if animal can breed.
+     */
+    protected boolean canBreed() {
+        return age >= getBreedingAge();
+    }
+    
+    /**
+     * Get current time of day.
+     */
+    public static int getTimeOfDay() {
+        return timeOfDay;
+    }
+    
+    /**
+     * Advance time by one hour.
+     */
+    public static void advanceTime() {
+        timeOfDay = (timeOfDay + 1) % 24;
+    }
+    
+    /**
+     * Check if it's daytime.
+     */
+    protected static boolean isDaytime() {
+        return timeOfDay >= 6 && timeOfDay < 18;
+    }
+
+    // Abstract methods to be implemented by specific animals
+    protected abstract Location findFood(Field field);
+    protected abstract int getMaxAge();
+    protected abstract int getBreedingAge();
+    protected abstract double getBreedingProbability();
+    protected abstract int getMaxLitterSize();
+    protected abstract int getMaxFoodValue();
+    protected abstract int getInitialFoodLevel();
+    protected abstract boolean isActiveTime();
+    protected abstract double getRestingProbability();
+    protected abstract void createYoung(boolean randomAge, Location location, Field field);
+    
 }
