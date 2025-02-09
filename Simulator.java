@@ -22,7 +22,7 @@ public class Simulator
     private static final double MOUSE_CREATION_PROBABILITY = 0.08;
     private static final double DEER_CREATION_PROBABILITY = 0.06;
     private static final double BERRY_CREATION_PROBABILITY = 0.09;
-    private static final double GRASS_CREATION_PROBABILITY = 0.12;
+    private static final double GRASS_CREATION_PROBABILITY = 0;   // grass will only spread in random patches
     
     // The current state of the field.
     private Field field;
