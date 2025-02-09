@@ -132,6 +132,8 @@ public class Simulator
         Random rand = Randomizer.getRandom();
         field.clear();
         
+        field.placeRandomGrassPatches(10, 5, 10);
+        
         for(int row = 0; row < field.getDepth(); row++) {
             for(int col = 0; col < field.getWidth(); col++) {
                 Location location = new Location(row, col);

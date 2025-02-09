@@ -143,4 +143,47 @@ public class Field
     public List<Animal> getAnimals() {
         return new ArrayList<>(animals.values());
     }
+    
+    /**
+     * check if a location is within the field bounds and not outside it.
+     * @param x the x-coordinate of the field.
+     * @param y the y-coordinate of the field.
+     * @return true if it's within the bounds.
+     */
+    public boolean isWithinBounds(int x, int y) {
+        return x >= 0 && x < depth && y >= 0 && y < width;
+    }
+    
+    /**
+     * Place grass patches randomly in the field.
+     * @param numPatches number of patches to generate e.g. 15 
+     * @param minSize minimum patch size e.g., 7x7.
+     * @param maxSize maximum patch size e.g., 25x25.
+     */
+    public void placeRandomGrassPatches(int numPatches, int minSize, int maxSize) {
+        for (int i = 0; i < numPatches; i++) {
+            int patchSize = rand.nextInt(maxSize - minSize + 1) + minSize; // generates a random patch size between the range
+            int startX = rand.nextInt(depth - patchSize);  // gets a random starting position in the field
+            int startY = rand.nextInt(width - patchSize);
+
+            placeGrassPatch(startX, startY, patchSize);   // places the grass patch
+        }
+    }
+    
+    /**
+     * places a grass patch of given size at a specific location.
+     * @param startX the starting x-coordinate in the field where the patch starts.
+     * @param startY the starting y-coordinate in the field where the patch ends.
+     * @param patchSize the size of the patch.
+     */
+    private void placeGrassPatch(int startX, int startY, int patchSize) {
+        for (int x = startX; x < startX + patchSize; x++) {
+            for (int y = startY; y < startY + patchSize; y++) {
+                Location loc = new Location(x, y);
+                if (isWithinBounds(x, y)) {  // only place the patch if it's within the field bounds
+                    placePlant(new Grass(loc, true), loc);
+                }
+            }
+        }
+    }
 }
