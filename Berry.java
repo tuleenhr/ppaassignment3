@@ -6,8 +6,8 @@
  * @version (a version number or a date)
  */
 public class Berry extends Plant {
-    private static final double GROWTH_PROBABILITY = 0.15;  // 15% chance to grow each step
-    private static final double SPREADING_PROBABILITY = 0.05;  // 8% chance to spread
+    private static final double GROWTH_PROBABILITY = 0.2;  // 15% chance to grow each step
+    private static final double SPREADING_PROBABILITY = 0.1;  // 8% chance to spread
 
     /**
      * Create a new berry plant

@@ -88,7 +88,7 @@ public class Simulator
     public void simulateOneStep()
     {
         step++;
-        timeOfDay = step % 2; // Alternates between 0 (Day) and 1 (Night)
+        TimeKeeper.advanceTime(); // Advance time (toggle day/night)
 
         // Provide space for newborn animals.
         Field nextField = new Field(field.getDepth(), field.getWidth());
@@ -105,10 +105,7 @@ public class Simulator
             if(plant.isAlive()) {
                 plant.act(field, nextField);
             }
-        }
-        
-        // Update time of day
-        TimeKeeper.advanceTime();        
+        }       
         
         // Replace the old state with the new one.
         field = nextField;
@@ -134,7 +131,7 @@ public class Simulator
         Random rand = Randomizer.getRandom();
         field.clear();
         
-        field.placeRandomGrassPatches(10, 5, 10);
+        field.placeRandomGrassPatches(15, 5, 10);
         
         for(int row = 0; row < field.getDepth(); row++) {
             for(int col = 0; col < field.getWidth(); col++) {

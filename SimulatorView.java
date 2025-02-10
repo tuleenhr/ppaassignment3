@@ -23,7 +23,7 @@ public class SimulatorView extends JFrame
 
     private final String STEP_PREFIX = "Step: ";
     private final String POPULATION_PREFIX = "Population: ";
-    private final JLabel stepLabel;
+    private final JLabel stepLabel; // Combined label for step and time
     private final JLabel population;
     private final FieldView fieldView;
     
@@ -65,8 +65,10 @@ public class SimulatorView extends JFrame
         contents.add(stepLabel, BorderLayout.NORTH);
         contents.add(fieldView, BorderLayout.CENTER);
         contents.add(population, BorderLayout.SOUTH);
+        
         pack();
         setVisible(true);
+    
     }
     
     /**
@@ -104,8 +106,8 @@ public class SimulatorView extends JFrame
         if(!isVisible()) {
             setVisible(true);
         }
-            
-        stepLabel.setText(STEP_PREFIX + step);
+        
+        stepLabel.setText(STEP_PREFIX + step + " | " + TimeKeeper.getTimeString());
         stats.reset();
         
         fieldView.preparePaint();

@@ -15,7 +15,7 @@ public class Mouse extends Animal
     private static final int MAX_AGE = 2 * 365 * 2;
     private static final double BREEDING_PROBABILITY = 0.4;
     private static final int MAX_LITTER_SIZE = 7;
-    private static final int BERRY_FOOD_VALUE = 10;
+    private static final int BERRY_FOOD_VALUE = 15;
     private static final boolean NOCTURNAL = true;
 
     /**
@@ -121,12 +121,12 @@ public class Mouse extends Animal
     
     @Override
     protected int getInitialFoodLevel() {
-        return BERRY_FOOD_VALUE;
+        return 15;
     }
     
     @Override
     protected boolean isActiveTime() {
-        return NOCTURNAL;
+        return !TimeKeeper.isDaytime(); // Active at night
     }
     
     @Override

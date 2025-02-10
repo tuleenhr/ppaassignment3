@@ -9,7 +9,7 @@
 public class TimeKeeper
 {
     // Time tracking (each step is 12 hours), 2 steps = 1 day
-    private static boolean isDay = true;  // true = AM, false = PM
+    private static boolean isDay = true;  // true = day, false = night
     private static int currentDay = 1;    // 1-30
     private static int currentMonth = 0;  // 0-11 (Jan-Dec)
 
@@ -34,18 +34,14 @@ public class TimeKeeper
         return Season.getSeason(currentMonth);
     }
     
-     /**
-     * Advance time by 12 hours
+    /**
+     * Advance time by 12 hours.
      */
     public static void advanceTime() {
-        // Toggle between AM and PM
-        isDay = !isDay;
-        
-        // If we just switched to AM, advance the day
-        if(isDay) {
+        isDay = !isDay; // Toggle between day and night
+        if (isDay) {
             currentDay++;
-            // If we've completed a month
-            if(currentDay > 30) {
+            if (currentDay > 30) {
                 currentDay = 1;
                 currentMonth = (currentMonth + 1) % 12;
             }
@@ -56,7 +52,7 @@ public class TimeKeeper
      * Get time of day as string
      */
     public static String getTimeOfDay() {
-        return isDay ? "AM" : "PM";
+        return isDay ? "Day" : "Night";
     }
     
     /**
@@ -72,7 +68,7 @@ public class TimeKeeper
     public static String getTimeString() {
         String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
                           "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-        return String.format("Day %d %s (%s) - %s", 
+        return String.format("%d %s (%s) - %s", 
             currentDay, 
             months[currentMonth], 
             getCurrentSeason(),

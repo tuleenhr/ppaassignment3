@@ -173,9 +173,11 @@ public abstract class Animal
         List<Location> adjacent = field.getAdjacentLocations(getLocation());
         for (Location loc : adjacent) {
             Animal animal = field.getAnimalAt(loc);
-            if (animal != null && animal.isAlive() && 
-                animal.getClass() == this.getClass() && 
-                animal.isMale() != this.isMale()) {
+            if (animal != null 
+                && animal.isAlive() 
+                && animal.getClass() == this.getClass()
+                && animal.isMale() != this.isMale()
+                && animal.canBreed()) {
                 return true;
             }
         }

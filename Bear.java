@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.Iterator;
+import java.util.Random;
 
 /**
  * A simple model of a fox.
@@ -13,11 +14,13 @@ public class Bear extends Animal
      // Characteristics shared by all bears (class variables)
     private static final int BREEDING_AGE = 3 * 365 * 2;
     private static final int MAX_AGE = 15 * 365 * 2;
-    private static final double BREEDING_PROBABILITY = 0.08;
-    private static final int MAX_LITTER_SIZE = 4;
-    private static final int DEER_FOOD_VALUE = 50;
-    private static final int MOUSE_FOOD_VALUE = 20;
+    private static final double BREEDING_PROBABILITY = 0.12;
+    private static final int MAX_LITTER_SIZE = 5;
+    private static final int DEER_FOOD_VALUE = 60;
+    private static final int MOUSE_FOOD_VALUE = 25;
     private static final boolean NOCTURNAL = false; 
+    
+    protected static final Random rand = Randomizer.getRandom();
 
     /**
      * Create a bear. A bear can be created as a new born (age zero
@@ -45,18 +48,20 @@ public class Bear extends Animal
             while(it.hasNext()) {
                 Location where = it.next();
                 Animal animal = field.getAnimalAt(where);
-            
-                // Try to find a deer first (more food value)
-                if(animal instanceof Deer && animal.isAlive()) {
-                    animal.setDead();
-                    eat(DEER_FOOD_VALUE);
-                    return where;
-                }
-                // If no deer found, try to find a mouse
-                else if(animal instanceof Mouse && animal.isAlive()) {
-                    animal.setDead();
-                    eat(MOUSE_FOOD_VALUE);
-                    return where;
+                // Only eat prey 50% of the time (reduce hunting efficiency)
+                if (rand.nextDouble() < 0.5) {
+                    // Try to find a deer first (more food value)
+                    if(animal instanceof Deer && animal.isAlive()) {
+                        animal.setDead();
+                        eat(DEER_FOOD_VALUE);
+                        return where;
+                    }
+                    // If no deer found, try to find a mouse
+                    else if(animal instanceof Mouse && animal.isAlive()) {
+                        animal.setDead();
+                        eat(MOUSE_FOOD_VALUE);
+                        return where;
+                    }
                 }
             }
         }
@@ -113,14 +118,13 @@ public class Bear extends Animal
     
       @Override
     protected int getInitialFoodLevel() {
-        // Random value between mouse and deer food values
-        return MOUSE_FOOD_VALUE + Randomizer.getRandom().nextInt(DEER_FOOD_VALUE - MOUSE_FOOD_VALUE + 1);
+        return 40;
     }
     
     @Override
     protected boolean isActiveTime() {
-       return NOCTURNAL;
-    }
+        return TimeKeeper.isDaytime(); // Active during the day
+    }   
     
     @Override
     protected double getRestingProbability() {

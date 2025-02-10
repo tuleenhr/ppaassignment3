@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.Iterator;
+import java.util.Random;
 
 /**
  * A simple model of a fox.
@@ -13,10 +14,12 @@ public class Owl extends Animal
      // Characteristics shared by all bears (class variables)
     private static final int BREEDING_AGE = 1 * 365 * 2;
     private static final int MAX_AGE = 10 * 365 * 2;
-    private static final double BREEDING_PROBABILITY = 0.15;
+    private static final double BREEDING_PROBABILITY = 0.18;
     private static final int MAX_LITTER_SIZE = 5;
-    private static final int MOUSE_FOOD_VALUE = 20;
-    private static final boolean NOCTURNAL = true; 
+    private static final int MOUSE_FOOD_VALUE = 25;
+    private static final boolean NOCTURNAL = true;
+    
+    protected static final Random rand = Randomizer.getRandom();
 
     /**
      * Create a bear. A bear can be created as a new born (age zero
@@ -45,10 +48,13 @@ public class Owl extends Animal
                 Location where = it.next();
                 Animal animal = field.getAnimalAt(where);
                 
-                if(animal instanceof Mouse && animal.isAlive()) {
-                    animal.setDead();
-                    eat(MOUSE_FOOD_VALUE);
-                    return where;
+                // Only eat prey 50% of the time (reduce hunting efficiency)
+                if (rand.nextDouble() < 0.5) {
+                    if(animal instanceof Mouse && animal.isAlive()) {
+                        animal.setDead();
+                        eat(MOUSE_FOOD_VALUE);
+                        return where;
+                    }
                 }
             }
         }      
@@ -106,12 +112,12 @@ public class Owl extends Animal
       @Override
     protected int getInitialFoodLevel() {
         // Random value between mouse food values
-        return MOUSE_FOOD_VALUE;
+        return 30;
     }
     
     @Override
     protected boolean isActiveTime() {
-        return NOCTURNAL;
+        return !TimeKeeper.isDaytime(); // Active at night
     }
     
     @Override

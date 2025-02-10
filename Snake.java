@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.Iterator;
+import java.util.Random;
 
 /**
  * A simple model of a fox.
@@ -17,6 +18,8 @@ public class Snake extends Animal
     private static final int MAX_LITTER_SIZE = 5;
     private static final int MOUSE_FOOD_VALUE = 20;
     private static final boolean NOCTURNAL = false; 
+    
+    protected static final Random rand = Randomizer.getRandom();
     
     /**
      * Create a bear. A bear can be created as a new born (age zero
@@ -46,10 +49,13 @@ public class Snake extends Animal
                 Location where = it.next();
                 Animal animal = field.getAnimalAt(where);
                 
-                if(animal instanceof Mouse && animal.isAlive()) {
-                    animal.setDead();
-                    eat(MOUSE_FOOD_VALUE);
-                    return where;
+                // Only eat prey 50% of the time (reduce hunting efficiency)
+                if (rand.nextDouble() < 0.5) {
+                    if(animal instanceof Mouse && animal.isAlive()) {
+                        animal.setDead();
+                        eat(MOUSE_FOOD_VALUE);
+                        return where;
+                    }
                 }
             }
         }
@@ -112,7 +118,7 @@ public class Snake extends Animal
     
     @Override
     protected boolean isActiveTime() {
-        return NOCTURNAL;
+        return TimeKeeper.isDaytime(); // Active during the day
     }
     
     @Override

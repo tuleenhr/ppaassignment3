@@ -12,10 +12,10 @@ public class Deer extends Animal
      // Characteristics shared by all deer (class variables)
     private static final int BREEDING_AGE = 2 * 365 * 2;
     private static final int MAX_AGE = 10 * 365 * 2;
-    private static final double BREEDING_PROBABILITY = 0.25;
-    private static final int MAX_LITTER_SIZE = 3;
-    private static final int GRASS_FOOD_VALUE = 15;
-    private static final int BERRY_FOOD_VALUE = 10;  
+    private static final double BREEDING_PROBABILITY = 0.30;
+    private static final int MAX_LITTER_SIZE = 4;
+    private static final int GRASS_FOOD_VALUE = 20;
+    private static final int BERRY_FOOD_VALUE = 15;  
     private static final boolean NOCTURNAL = false; 
     
     /**
@@ -134,12 +134,12 @@ public class Deer extends Animal
     
     @Override
     protected int getInitialFoodLevel() {
-        return GRASS_FOOD_VALUE;
+        return 20;
     }
     
     @Override
     protected boolean isActiveTime() {
-    return NOCTURNAL;
+        return TimeKeeper.isDaytime(); // Active during the day
     }
     
     @Override

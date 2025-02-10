@@ -7,8 +7,8 @@
  */
 
 public class Grass extends Plant {
-    private static final double GROWTH_PROBABILITY = 0.2;   // 20% chance to grow each step
-    private static final double SPREADING_PROBABILITY = 0.1; // 10% chance to spread
+    private static final double GROWTH_PROBABILITY = 0.3;   // 20% chance to grow each step
+    private static final double SPREADING_PROBABILITY = 0.2; // 10% chance to spread
     
     /**
      * Create a new grass plant
