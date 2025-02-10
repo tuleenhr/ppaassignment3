@@ -11,11 +11,12 @@ import java.util.Iterator;
 public class Mouse extends Animal
 {
      // Characteristics shared by all mice (class variables)
-    private static final int BREEDING_AGE = 2;
-    private static final int MAX_AGE = 20;
-    private static final double BREEDING_PROBABILITY = 0.20;
-    private static final int MAX_LITTER_SIZE = 6;
-    private static final int BERRY_FOOD_VALUE = 5;
+    private static final int BREEDING_AGE = 120;
+    private static final int MAX_AGE = 2 * 365 * 2;
+    private static final double BREEDING_PROBABILITY = 0.4;
+    private static final int MAX_LITTER_SIZE = 7;
+    private static final int BERRY_FOOD_VALUE = 10;
+    private static final boolean NOCTURNAL = true;
 
     /**
      * Create a bear. A bear can be created as a new born (age zero
@@ -24,8 +25,8 @@ public class Mouse extends Animal
      * @param randomAge If true, the bear will have random age and hunger level.
      * @param location The location within the field.
      */
-     public Mouse(boolean randomAge, Location location) {
-        super(location, randomAge);
+    public Mouse(boolean randomAge, Field field, Location location) {
+        super(location, randomAge, BREEDING_AGE, MAX_AGE);
     }
     
     /**
@@ -36,47 +37,59 @@ public class Mouse extends Animal
      */
     @Override
     protected Location findFood(Field field) {
-        List<Location> adjacent = field.getAdjacentLocations(getLocation());
-        Iterator<Location> it = adjacent.iterator();
-        
-        // First, check if there are any predators nearby
-        boolean dangerNearby = false;
-        for(Location loc : adjacent) {
-            Animal animal = field.getAnimalAt(loc);
-            if(animal instanceof Bear || animal instanceof Owl || animal instanceof Snake) {
-                dangerNearby = true;
-                break;
-            }
-        }
-        
-        // If danger is nearby, mice might skip eating to move to safety
-        if(dangerNearby && getFoodLevel() > BERRY_FOOD_VALUE/2) {
-            return null;
-        }
-        
-        // Look for food if hungry enough or no danger
-        while(it.hasNext()) {
-            Location where = it.next();
-            Plant plant = field.getPlantAt(where);
+        if (getFoodLevel() < getMaxFoodValue() / 2) { // Only search for food if hungry
+            List<Location> adjacent = field.getAdjacentLocations(getLocation());
+            Iterator<Location> it = adjacent.iterator();
             
-            if(plant instanceof Berry && plant.isAlive()) {
-                plant.setDead();
-                setFoodLevel(BERRY_FOOD_VALUE);
-                return where;
+            // First, check if there are any predators nearby
+            boolean dangerNearby = false;
+            for(Location loc : adjacent) {
+                Animal animal = field.getAnimalAt(loc);
+                if(animal instanceof Bear || animal instanceof Owl || animal instanceof Snake) {
+                    dangerNearby = true;
+                    break;
+                }
+            }
+            
+            // If danger is nearby, mice might skip eating to move to safety
+            if(dangerNearby && getFoodLevel() > BERRY_FOOD_VALUE/2) {
+                return null;
+            }
+            
+            // Look for food if hungry enough or no danger
+            while(it.hasNext()) {
+                Location where = it.next();
+                Plant plant = field.getPlantAt(where);
+                
+                if(plant instanceof Berry && plant.isAlive()) {
+                    plant.setDead();
+                    eat(BERRY_FOOD_VALUE);
+                    return where;
+                }
             }
         }
         return null;
     }
     
     /**
-     * Create a new bear.
+     * Eat food but only if hungry.
+     * @param foodValue The amount of food gained.
+     */
+    protected void eat(int foodValue) {
+        if (getFoodLevel() < getMaxFoodValue() / 2) { // Only eat when food level is below 50%
+            setFoodLevel(getFoodLevel() + foodValue);
+        }
+    }
+    
+    /**
+     * Create a new mouse.
      * @param randomAge Whether to create a bear with random age or as a baby.
      * @param location Where to create the bear.
      * @param field The field to place the bear in.
      */
     @Override
     protected void createYoung(boolean randomAge, Location location, Field field) {
-        Mouse young = new Mouse(randomAge, location);
+        Mouse young = new Mouse(randomAge, field, location);
         field.placeAnimal(young, location);
     }
     
@@ -113,7 +126,7 @@ public class Mouse extends Animal
     
     @Override
     protected boolean isActiveTime() {
-        return !isDaytime(); // Mice are nocturnal
+        return NOCTURNAL;
     }
     
     @Override

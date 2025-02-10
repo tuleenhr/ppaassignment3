@@ -10,35 +10,34 @@ import java.util.Random;
 public abstract class Animal
 {
     private static final Random rand = Randomizer.getRandom();
-    private static int timeOfDay = 0;
-    // Whether the animal is alive or not.
+    
+    // Instance variables
     private boolean alive;
-    // The animal's position.
     private Location location;
     private final boolean isMale;
     private int age;
     private int foodLevel;
+    private int breedingAge;
+    
     /**
      * Constructor for objects of class Animal.
      * @param location The animal's location.
      * @param randomize A boolean to determine random gender assignment
      */
-    public Animal(Location location, boolean randomize) {
+    public Animal(Location location, boolean randomize, int breedingAge, int lifespan) {
         this.alive = true;
         this.location = location;
-        this.age = 0;
+        this.breedingAge = breedingAge;
+
         if (randomize) {
             this.isMale = Randomizer.getRandom().nextBoolean();
+            this.age = Randomizer.getRandom().nextInt(getMaxAge()); // Random starting age
+            this.foodLevel = getInitialFoodLevel(); // Ensure animal starts with food
         } else {
             this.isMale = false; // Default to female if not randomized
-        }
-        if(randomize) {
-            this.age = rand.nextInt(getMaxAge());
-            this.foodLevel = getInitialFoodLevel();
-        }
-        else {
-            this.foodLevel = getMaxFoodValue();
-        }
+            this.age = 0; // Start at birth
+            this.foodLevel = getMaxFoodValue(); // Full food if not randomized
+        }   
     }
     
     /**
@@ -83,6 +82,10 @@ public abstract class Animal
                 setDead();
             }
         }
+    }
+    
+    protected boolean isBreedingSeason() {
+        return Season.isBreedingSeason(TimeKeeper.getCurrentSeason());
     }
     
     /**
@@ -203,27 +206,6 @@ public abstract class Animal
      */
     protected boolean canBreed() {
         return age >= getBreedingAge();
-    }
-    
-    /**
-     * Get current time of day.
-     */
-    public static int getTimeOfDay() {
-        return timeOfDay;
-    }
-    
-    /**
-     * Advance time by one hour.
-     */
-    public static void advanceTime() {
-        timeOfDay = (timeOfDay + 1) % 24;
-    }
-    
-    /**
-     * Check if it's daytime.
-     */
-    protected static boolean isDaytime() {
-        return timeOfDay >= 6 && timeOfDay < 18;
     }
 
     // Abstract methods to be implemented by specific animals

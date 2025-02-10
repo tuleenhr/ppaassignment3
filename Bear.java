@@ -11,12 +11,13 @@ import java.util.Iterator;
 public class Bear extends Animal
 {
      // Characteristics shared by all bears (class variables)
-    private static final int BREEDING_AGE = 15;
-    private static final int MAX_AGE = 150;
+    private static final int BREEDING_AGE = 3 * 365 * 2;
+    private static final int MAX_AGE = 15 * 365 * 2;
     private static final double BREEDING_PROBABILITY = 0.08;
-    private static final int MAX_LITTER_SIZE = 2;
-    private static final int DEER_FOOD_VALUE = 9;
-    private static final int MOUSE_FOOD_VALUE = 4;
+    private static final int MAX_LITTER_SIZE = 4;
+    private static final int DEER_FOOD_VALUE = 50;
+    private static final int MOUSE_FOOD_VALUE = 20;
+    private static final boolean NOCTURNAL = false; 
 
     /**
      * Create a bear. A bear can be created as a new born (age zero
@@ -25,8 +26,8 @@ public class Bear extends Animal
      * @param randomAge If true, the bear will have random age and hunger level.
      * @param location The location within the field.
      */
-     public Bear(boolean randomAge, Location location) {
-        super(location, randomAge);
+    public Bear(boolean randomAge, Field field, Location location) {
+        super(location, randomAge, BREEDING_AGE, MAX_AGE);
     }
     
     /**
@@ -37,27 +38,39 @@ public class Bear extends Animal
      */
     @Override
     protected Location findFood(Field field) {
-        List<Location> adjacent = field.getAdjacentLocations(getLocation());
-        Iterator<Location> it = adjacent.iterator();
+        if (getFoodLevel() < getMaxFoodValue() / 2) { // Only search for food if hungry
+            List<Location> adjacent = field.getAdjacentLocations(getLocation());
+            Iterator<Location> it = adjacent.iterator();
         
-        while(it.hasNext()) {
-            Location where = it.next();
-            Animal animal = field.getAnimalAt(where);
+            while(it.hasNext()) {
+                Location where = it.next();
+                Animal animal = field.getAnimalAt(where);
             
-            // Try to find a deer first (more food value)
-            if(animal instanceof Deer && animal.isAlive()) {
-                animal.setDead();
-                setFoodLevel(DEER_FOOD_VALUE);
-                return where;
-            }
-            // If no deer found, try to find a mouse
-            else if(animal instanceof Mouse && animal.isAlive()) {
-                animal.setDead();
-                setFoodLevel(MOUSE_FOOD_VALUE);
-                return where;
+                // Try to find a deer first (more food value)
+                if(animal instanceof Deer && animal.isAlive()) {
+                    animal.setDead();
+                    eat(DEER_FOOD_VALUE);
+                    return where;
+                }
+                // If no deer found, try to find a mouse
+                else if(animal instanceof Mouse && animal.isAlive()) {
+                    animal.setDead();
+                    eat(MOUSE_FOOD_VALUE);
+                    return where;
+                }
             }
         }
         return null;
+    }
+    
+    /**
+     * Eat food but only if hungry.
+     * @param foodValue The amount of food gained.
+     */
+    protected void eat(int foodValue) {
+        if (getFoodLevel() < getMaxFoodValue() / 2) { // Only eat when food level is below 50%
+            setFoodLevel(getFoodLevel() + foodValue);
+        }
     }
     
     /**
@@ -68,7 +81,7 @@ public class Bear extends Animal
      */
     @Override
     protected void createYoung(boolean randomAge, Location location, Field field) {
-        Bear young = new Bear(randomAge, location);
+        Bear young = new Bear(randomAge, field, location);
         field.placeAnimal(young, location);
     }
     
@@ -106,9 +119,7 @@ public class Bear extends Animal
     
     @Override
     protected boolean isActiveTime() {
-        int hour = getTimeOfDay();
-        // Bears are most active at dawn (5-8) and dusk (17-20)
-        return (hour >= 5 && hour <= 8) || (hour >= 17 && hour <= 20);
+       return NOCTURNAL;
     }
     
     @Override

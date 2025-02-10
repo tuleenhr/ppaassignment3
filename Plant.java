@@ -10,6 +10,7 @@ import java.util.Random;
 public abstract class Plant
 {
     private static final Random rand = Randomizer.getRandom();
+    
     private boolean alive;
     private Location location;
     private int growthStage;    // The growth stage (0 = seed, 1 = growing, 2 = mature)
@@ -31,12 +32,16 @@ public abstract class Plant
     public void act(Field currentField, Field nextFieldState) {
         if(isAlive()) {
             // Only spread seeds if mature
-            if(growthStage == 2 && isDaytime()) {
+            if(growthStage == 2 && TimeKeeper.isDaytime()) {
                 spreadSeeds(nextFieldState);
             }
             // Try to grow if not mature
-            else if(growthStage < 2 && isDaytime()) {
-                grow();
+            else if(growthStage < 2 && TimeKeeper.isDaytime()) {
+                // Apply seasonal growth modifier
+                double modifier = Season.getGrowthModifier(TimeKeeper.getCurrentSeason());
+                if(rand.nextDouble() < getGrowthProbability() * modifier) {
+                    grow();
+                }
             }
             
             // Stay in the same location if still alive
@@ -44,14 +49,6 @@ public abstract class Plant
                 nextFieldState.placePlant(this, getLocation());
             }
         }
-    }
-    
-    /**
-     * Check if it's daytime
-     */
-    protected boolean isDaytime() {
-        int time = Animal.getTimeOfDay();
-        return time >= 6 && time < 18;
     }
     
     /**
@@ -84,9 +81,7 @@ public abstract class Plant
      * Try to grow to next stage
      */
     protected void grow() {
-        if(rand.nextDouble() < getGrowthProbability()) {
             growthStage++;
-        }
     }
     
     /**
@@ -94,7 +89,11 @@ public abstract class Plant
      */
     protected void spreadSeeds(Field field) {
         List<Location> free = field.getFreeAdjacentLocations(getLocation());
-        if(!free.isEmpty() && rand.nextDouble() < getSpreadingProbability()) {
+        
+        // Modify spreading based on season
+        double modifier = Season.getGrowthModifier(TimeKeeper.getCurrentSeason());
+        
+        if(!free.isEmpty() && rand.nextDouble() < getSpreadingProbability() * modifier) {
             Location loc = free.get(0);
             createNewPlant(false, loc, field);
         }

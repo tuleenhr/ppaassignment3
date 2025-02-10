@@ -17,10 +17,10 @@ public class Simulator
    
     // Constants for creation probabilities
     private static final double BEAR_CREATION_PROBABILITY = 0.02;
-    private static final double OWL_CREATION_PROBABILITY = 0.03;
-    private static final double SNAKE_CREATION_PROBABILITY = 0.03;
-    private static final double MOUSE_CREATION_PROBABILITY = 0.08;
-    private static final double DEER_CREATION_PROBABILITY = 0.06;
+    private static final double OWL_CREATION_PROBABILITY = 0.02;
+    private static final double SNAKE_CREATION_PROBABILITY = 0.02;
+    private static final double MOUSE_CREATION_PROBABILITY = 0.05;
+    private static final double DEER_CREATION_PROBABILITY = 0.05;
     private static final double BERRY_CREATION_PROBABILITY = 0.09;
     private static final double GRASS_CREATION_PROBABILITY = 0;   // grass will only spread in random patches
     
@@ -28,6 +28,7 @@ public class Simulator
     private Field field;
     // The current step of the simulation.
     private int step;
+    private int timeOfDay = 0; // 0 = Day, 1 = Night
     // A graphical view of the simulation.
     private final SimulatorView view;
 
@@ -87,6 +88,7 @@ public class Simulator
     public void simulateOneStep()
     {
         step++;
+        timeOfDay = step % 2; // Alternates between 0 (Day) and 1 (Night)
 
         // Provide space for newborn animals.
         Field nextField = new Field(field.getDepth(), field.getWidth());
@@ -106,7 +108,7 @@ public class Simulator
         }
         
         // Update time of day
-        Animal.advanceTime();        
+        TimeKeeper.advanceTime();        
         
         // Replace the old state with the new one.
         field = nextField;
@@ -140,19 +142,19 @@ public class Simulator
                 double chance = rand.nextDouble();  // Generate one random number for this location
                 
                 if(chance <= BEAR_CREATION_PROBABILITY) {
-                    field.placeAnimal(new Bear(true, location), location);
+                    field.placeAnimal(new Bear(true, field, location), location);
                 }
                 else if(chance <= BEAR_CREATION_PROBABILITY + OWL_CREATION_PROBABILITY) {
-                    field.placeAnimal(new Owl(true, location), location);
+                    field.placeAnimal(new Owl(true, field, location), location);
                 }
                 else if(chance <= BEAR_CREATION_PROBABILITY + OWL_CREATION_PROBABILITY + SNAKE_CREATION_PROBABILITY) {
-                    field.placeAnimal(new Snake(true, location), location);
+                    field.placeAnimal(new Snake(true, field, location), location);
                 }
                 else if(chance <= BEAR_CREATION_PROBABILITY + OWL_CREATION_PROBABILITY + SNAKE_CREATION_PROBABILITY + MOUSE_CREATION_PROBABILITY) {
-                    field.placeAnimal(new Mouse(true, location), location);
+                    field.placeAnimal(new Mouse(true, field, location), location);
                 }
                 else if(chance <= BEAR_CREATION_PROBABILITY + OWL_CREATION_PROBABILITY + SNAKE_CREATION_PROBABILITY + MOUSE_CREATION_PROBABILITY + DEER_CREATION_PROBABILITY) {
-                    field.placeAnimal(new Deer(true, location), location);
+                    field.placeAnimal(new Deer(true, field, location), location);
                 }
                 else if(chance <= BEAR_CREATION_PROBABILITY + OWL_CREATION_PROBABILITY + SNAKE_CREATION_PROBABILITY + MOUSE_CREATION_PROBABILITY + DEER_CREATION_PROBABILITY + BERRY_CREATION_PROBABILITY) {
                     field.placePlant(new Berry(location, true), location);

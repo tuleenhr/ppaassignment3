@@ -11,12 +11,13 @@ import java.util.Iterator;
 public class Snake extends Animal
 {
     // Characteristics shared by all snakes (class variables)
-    private static final int BREEDING_AGE = 8;
-    private static final int MAX_AGE = 80;
-    private static final double BREEDING_PROBABILITY = 0.12;
-    private static final int MAX_LITTER_SIZE = 4;
-    private static final int MOUSE_FOOD_VALUE = 5;
-
+    private static final int BREEDING_AGE = 2 * 365 * 2;
+    private static final int MAX_AGE = 10 * 365 * 2;
+    private static final double BREEDING_PROBABILITY = 0.15;
+    private static final int MAX_LITTER_SIZE = 5;
+    private static final int MOUSE_FOOD_VALUE = 20;
+    private static final boolean NOCTURNAL = false; 
+    
     /**
      * Create a bear. A bear can be created as a new born (age zero
      * and not hungry) or with a random age and food level.
@@ -24,8 +25,8 @@ public class Snake extends Animal
      * @param randomAge If true, the bear will have random age and hunger level.
      * @param location The location within the field.
      */
-     public Snake(boolean randomAge, Location location) {
-        super(location, randomAge);
+    public Snake(boolean randomAge, Field field, Location location) {
+        super(location, randomAge, BREEDING_AGE, MAX_AGE);
     }
     
     /**
@@ -36,20 +37,33 @@ public class Snake extends Animal
      */
     @Override
     protected Location findFood(Field field) {
-        List<Location> adjacent = field.getAdjacentLocations(getLocation());
-        Iterator<Location> it = adjacent.iterator();
-        
-        while(it.hasNext()) {
-            Location where = it.next();
-            Animal animal = field.getAnimalAt(where);
+        if (getFoodLevel() < getMaxFoodValue() / 2) { // Only search for food if hungry
+    
+            List<Location> adjacent = field.getAdjacentLocations(getLocation());
+            Iterator<Location> it = adjacent.iterator();
             
-            if(animal instanceof Mouse && animal.isAlive()) {
-                animal.setDead();
-                setFoodLevel(MOUSE_FOOD_VALUE);
-                return where;
+            while(it.hasNext()) {
+                Location where = it.next();
+                Animal animal = field.getAnimalAt(where);
+                
+                if(animal instanceof Mouse && animal.isAlive()) {
+                    animal.setDead();
+                    eat(MOUSE_FOOD_VALUE);
+                    return where;
+                }
             }
         }
         return null;
+    }
+    
+    /**
+     * Eat food but only if hungry.
+     * @param foodValue The amount of food gained.
+     */
+    protected void eat(int foodValue) {
+        if (getFoodLevel() < getMaxFoodValue() / 2) { // Only eat when food level is below 50%
+            setFoodLevel(getFoodLevel() + foodValue);
+        }
     }
     
     /**
@@ -60,7 +74,7 @@ public class Snake extends Animal
      */
     @Override
     protected void createYoung(boolean randomAge, Location location, Field field) {
-        Snake young = new Snake(randomAge, location);
+        Snake young = new Snake(randomAge, field, location);
         field.placeAnimal(young, location);
     }
     
@@ -98,7 +112,7 @@ public class Snake extends Animal
     
     @Override
     protected boolean isActiveTime() {
-        return isDaytime(); // Snakes are active during the day
+        return NOCTURNAL;
     }
     
     @Override
