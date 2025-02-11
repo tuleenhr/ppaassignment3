@@ -12,9 +12,9 @@ import java.util.Random;
 public class Snake extends Animal
 {
     // Characteristics shared by all snakes (class variables)
-    private static final int BREEDING_AGE = 2 * 365 * 2;
+    private static final int BREEDING_AGE = 2;
     private static final int MAX_AGE = 10 * 365 * 2;
-    private static final double BREEDING_PROBABILITY = 0.15;
+    private static final double BREEDING_PROBABILITY = 0.40;
     private static final int MAX_LITTER_SIZE = 5;
     private static final int MOUSE_FOOD_VALUE = 20;
     private static final boolean NOCTURNAL = false; 
@@ -117,7 +117,7 @@ public class Snake extends Animal
       @Override
     protected int getInitialFoodLevel() {
         // Random value between mouse food values
-        return MOUSE_FOOD_VALUE;
+        return 30;
     }
     
     @Override

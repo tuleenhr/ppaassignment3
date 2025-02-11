@@ -186,5 +186,59 @@ public class Field
             }
         }
     }
+    
+    /**
+     * Place animal clusters randomly in the field.
+     * @param numClusters Number of clusters to generate (e.g., 6 clusters of bears).
+     * @param minSize Minimum cluster size (e.g., 3 animals).
+     * @param maxSize Maximum cluster size (e.g., 8 animals).
+     * @param animalClass The species to place.
+     */
+    public void placeRandomAnimalClusters(int numClusters, int minSize, int maxSize, Class<?> animalClass) {
+        for (int i = 0; i < numClusters; i++) {
+            int clusterSize = rand.nextInt(maxSize - minSize + 1) + minSize; // Random cluster size
+            int startX = rand.nextInt(depth - 5);  // Ensures clusters stay inside the grid
+            int startY = rand.nextInt(width - 5);
+    
+            placeAnimalCluster(startX, startY, clusterSize, animalClass);
+        }
+    }
+    
+    /**
+     * Places a cluster of a given animal at a specific location.
+     * @param startX The starting x-coordinate in the field where the cluster begins.
+     * @param startY The starting y-coordinate in the field where the cluster ends.
+     * @param clusterSize The number of animals in the cluster.
+     * @param animalClass The species to place.
+     */
+    private void placeAnimalCluster(int startX, int startY, int clusterSize, Class<?> animalClass) {
+        for (int x = startX; x < startX + Math.sqrt(clusterSize); x++) { // Spread animals in a small square
+            for (int y = startY; y < startY + Math.sqrt(clusterSize); y++) {
+                Location loc = new Location(x, y);
+                if (isWithinBounds(x, y) && isFree(loc)) {  
+                    placeAnimalByClass(animalClass, loc);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Helper method to create and place an animal based on its class.
+     * @param animalClass The class of the animal.
+     * @param location The location where it should be placed.
+     */
+    private void placeAnimalByClass(Class<?> animalClass, Location location) {
+        if (animalClass == Bear.class) {
+            placeAnimal(new Bear(true, this, location), location);
+        } else if (animalClass == Deer.class) {
+            placeAnimal(new Deer(true, this, location), location);
+        } else if (animalClass == Mouse.class) {
+            placeAnimal(new Mouse(true, this, location), location);
+        } else if (animalClass == Snake.class) {
+            placeAnimal(new Snake(true, this, location), location);
+        } else if (animalClass == Owl.class) {
+            placeAnimal(new Owl(true, this, location), location);
+        }
+    }
 
 }

@@ -96,6 +96,7 @@ public class Simulator
         for(Animal animal : field.getAnimals()) {
             if(animal.isAlive()) {
                 animal.act(field, nextField);
+                nextField.placeAnimal(animal, animal.getLocation()); // ensure every animal moves
             }
         }
         
@@ -130,7 +131,13 @@ public class Simulator
         Random rand = Randomizer.getRandom();
         field.clear();
         
-        field.placeRandomGrassPatches(15, 5, 10);
+        // place random clusters of grass and animals scattered around the map.
+        field.placeRandomGrassPatches(30, 10, 20);
+        field.placeRandomAnimalClusters(40, 30, 40, Mouse.class); // 10 clusters of mice, size 6-12
+        field.placeRandomAnimalClusters(30, 20, 30, Deer.class); // 8 clusters of deer, size 10-15
+        field.placeRandomAnimalClusters(20, 10, 20, Owl.class); // 4 clusters of owls, size 2-6
+        field.placeRandomAnimalClusters(20, 10, 15, Snake.class); // 5 clusters of snakes, size 3-7
+        field.placeRandomAnimalClusters(3, 3, 6, Bear.class);  // 6 clusters of bears, size 4-8
         
         for(int row = 0; row < field.getDepth(); row++) {
             for(int col = 0; col < field.getWidth(); col++) {
@@ -162,6 +169,9 @@ public class Simulator
         }
     }
 
+
+
+
     /**
      * Pause for a given time.
      * @param milliseconds The time to pause for, in milliseconds
@@ -175,4 +185,7 @@ public class Simulator
             // ignore
         }
     }
+    
+
+    
 }

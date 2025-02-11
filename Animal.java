@@ -68,7 +68,7 @@ public abstract class Animal
             Location foodLocation = findFood(currentField);
             
             // Try to breed if well-fed
-            if(foodLevel >= getMaxFoodValue()/2 && !freeLocations.isEmpty()) {
+            if(foodLevel >= getMaxFoodValue()/4 && !freeLocations.isEmpty()) {
                 if(canBreed() && canFindMate(currentField)) {
                     giveBirth(nextFieldState, freeLocations);
                 }
