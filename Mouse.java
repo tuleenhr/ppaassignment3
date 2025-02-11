@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.Iterator;
+import java.util.Random;
 
 /**
  * A simple model of a fox.
@@ -19,7 +20,7 @@ public class Mouse extends Animal
     private static final boolean NOCTURNAL = true;
 
     /**
-     * Create a bear. A bear can be created as a new born (age zero
+     * Create a mouse. A bear can be created as a new born (age zero
      * and not hungry) or with a random age and food level.
      * 
      * @param randomAge If true, the bear will have random age and hunger level.
@@ -27,6 +28,9 @@ public class Mouse extends Animal
      */
     public Mouse(boolean randomAge, Field field, Location location) {
         super(location, randomAge, BREEDING_AGE, MAX_AGE);
+        if (Randomizer.getRandom().nextDouble() < 0.1) { // 10% chance to be infected at birth
+            setInfected();
+        }
     }
     
     /**

@@ -18,6 +18,11 @@ public abstract class Animal
     private int age;
     private int foodLevel;
     private int breedingAge;
+    private boolean infected = false;  // tracks if the animal is infected
+    private boolean justInfected = false;  // track new infections
+    protected static final double PREDATOR_INFECTION_PROBABILITY = 0.8;  // 80% chance of infection when eating an infected mouse
+    private static final double PREDATOR_DEATH_PROBABILITY = 0.4;  // 70% chance to die next cycle if infected
+
     
     /**
      * Constructor for objects of class Animal.
@@ -48,6 +53,7 @@ public abstract class Animal
     public void act(Field currentField, Field nextFieldState) {
         incrementAge();
         incrementHunger();
+        handleDisease();    // kill newly infected predators 70% of the time
         
         if(isAlive()) {
             // Check if active based on time of day
@@ -209,6 +215,36 @@ public abstract class Animal
     protected boolean canBreed() {
         return age >= getBreedingAge();
     }
+    
+    /**
+     * Infect this animal.
+     */
+    public void setInfected() {
+        this.infected = true;
+        this.justInfected = true;  // mark animal as just infected
+    }
+    
+    /**
+     * Check if the animal is infected.
+     */
+    public boolean isInfected() {
+        return infected;
+    }
+    
+    /**
+     * Handle diseases: If a predator that just got infected, 
+     * there is a 70% chance it dies immediately. 
+     * If not, heals after one cycle
+     */
+    private void handleDisease() {
+        if (infected && justInfected) {
+            justInfected = false;  // reset flag so the death chance applies only once
+            if (rand.nextDouble() < PREDATOR_DEATH_PROBABILITY) {
+                setDead();
+            }
+        }
+    }
+
 
     // Abstract methods to be implemented by specific animals
     protected abstract Location findFood(Field field);

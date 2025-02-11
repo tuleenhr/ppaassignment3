@@ -15,6 +15,8 @@ public class FieldStats
     private final Map<Class<?>, Counter> counters;
     // Whether the counters are currently up to date.
     private boolean countsValid;
+    // track all infected animals (both mice and predators)
+    private int infectedAnimalsCount = 0;
 
     /**
      * Construct a FieldStats object.
@@ -61,6 +63,8 @@ public class FieldStats
             }
         }
         
+        details.append("| " + "Infected: " + getInfectedAnimalsCount(field));
+            
         return details.toString();
     }
     
@@ -131,11 +135,15 @@ public class FieldStats
      */
     private void generateCounts(Field field) {
         reset();
+        infectedAnimalsCount = 0;
         
         // Count animals
-        for(Animal animal : field.getAnimals()) {
-            if(animal.isAlive()) {
+        for (Animal animal : field.getAnimals()) {
+            if (animal.isAlive()) {
                 incrementCount(animal.getClass());
+                if (animal.isInfected()) {
+                    infectedAnimalsCount++;  // if the animal is infected and alive, increase the infected count
+                }
             }
         }
         
@@ -147,5 +155,12 @@ public class FieldStats
         }
         
         countsValid = true;
+        
     }
+    
+    public int getInfectedAnimalsCount(Field field) {
+        generateCounts(field);
+        return infectedAnimalsCount;
+    }
+
 }

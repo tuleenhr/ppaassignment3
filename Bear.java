@@ -14,7 +14,7 @@ public class Bear extends Animal
      // Characteristics shared by all bears (class variables)
     private static final int BREEDING_AGE = 3 * 365 * 2;
     private static final int MAX_AGE = 15 * 365 * 2;
-    private static final double BREEDING_PROBABILITY = 0.12;
+    private static final double BREEDING_PROBABILITY = 0.14;
     private static final int MAX_LITTER_SIZE = 5;
     private static final int DEER_FOOD_VALUE = 60;
     private static final int MOUSE_FOOD_VALUE = 25;
@@ -56,8 +56,11 @@ public class Bear extends Animal
                         eat(DEER_FOOD_VALUE);
                         return where;
                     }
-                    // If no deer found, try to find a mouse
                     else if(animal instanceof Mouse && animal.isAlive()) {
+                        // Check if the mouse is infected
+                        if (animal.isInfected() && Randomizer.getRandom().nextDouble() < PREDATOR_INFECTION_PROBABILITY) {
+                            setInfected();  // 80% chance to get infected
+                        }
                         animal.setDead();
                         eat(MOUSE_FOOD_VALUE);
                         return where;

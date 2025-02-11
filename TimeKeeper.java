@@ -1,4 +1,3 @@
-
 /**
  * Manages time progression in the simulation.
  * Handles day/night cycles and seasons.

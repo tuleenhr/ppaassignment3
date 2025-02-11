@@ -52,9 +52,13 @@ public class Snake extends Animal
                 // Only eat prey 50% of the time (reduce hunting efficiency)
                 if (rand.nextDouble() < 0.5) {
                     if(animal instanceof Mouse && animal.isAlive()) {
-                        animal.setDead();
-                        eat(MOUSE_FOOD_VALUE);
-                        return where;
+                        // Check if the mouse is infected
+                        if (animal.isInfected() && Randomizer.getRandom().nextDouble() < PREDATOR_INFECTION_PROBABILITY) {
+                            setInfected();  // 80% chance to get infected
+                        }
+                    animal.setDead();
+                    eat(MOUSE_FOOD_VALUE);
+                    return where;
                     }
                 }
             }
