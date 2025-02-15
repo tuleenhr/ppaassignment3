@@ -191,11 +191,11 @@ public abstract class Animal
     }
     
     protected void giveBirth(Field nextFieldState, List<Location> freeLocations) {
-        int births = breed();
-        for(int b = 0; b < births && !freeLocations.isEmpty(); b++) {
-            Location loc = freeLocations.remove(0);
-            createYoung(false, loc, nextFieldState);
-        }
+            int births = breed();
+            for(int b = 0; b < births && !freeLocations.isEmpty(); b++) {
+                Location loc = freeLocations.remove(0);
+                createYoung(false, loc, nextFieldState);
+            }   
     }
     
     /**
@@ -203,8 +203,19 @@ public abstract class Animal
      */
     private int breed() {
         int births = 0;
-        if(canBreed() && rand.nextDouble() <= getBreedingProbability()) {
-            births = rand.nextInt(getMaxLitterSize()) + 1;
+        if(canBreed()) {
+            if(!reproducesSexually()) {
+                // Asexual reproduction - just check probability
+                if(rand.nextDouble() <= getBreedingProbability()) {
+                    births = 1;  // Asexual animals have one offspring
+                }
+            }
+            else {
+                // Sexual reproduction - probability determines litter size
+                if(rand.nextDouble() <= getBreedingProbability()) {
+                    births = rand.nextInt(getMaxLitterSize()) + 1;
+                }
+            }
         }
         return births;
     }
@@ -244,7 +255,10 @@ public abstract class Animal
             }
         }
     }
-
+    
+    protected boolean reproducesSexually() {
+        return true;  // Default is true, override in Lizard class to return false
+    }
 
     // Abstract methods to be implemented by specific animals
     protected abstract Location findFood(Field field);

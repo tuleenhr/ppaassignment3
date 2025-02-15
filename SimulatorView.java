@@ -46,8 +46,9 @@ public class SimulatorView extends JFrame
         setColor(Bear.class, new Color(139, 69, 19));      // Saddle Brown for Bear
         setColor(Owl.class, new Color(128, 128, 128));     // Gray for Owl
         setColor(Snake.class, new Color(50, 205, 50));     // Lime Green for Snake
-        setColor(Deer.class, new Color(205, 133, 63));     // Peru (light brown) for Deer
-        setColor(Mouse.class, new Color(255, 215, 0));     // Gold for Mouse - much brighter
+        setColor(Deer.class, new Color(205, 133, 63));     // Peru light brown for Deer
+        setColor(Mouse.class, new Color(255, 215, 0));     // Gold for Mouse
+        setColor(Lizard.class, new Color(61, 127, 242));     // light blue fpr snake
 
         // Plants
         setColor(Berry.class, new Color(148, 0, 211));     // Dark Violet for Berry

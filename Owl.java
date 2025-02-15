@@ -17,7 +17,7 @@ public class Owl extends Animal
     private static final double BREEDING_PROBABILITY = 0.40;
     private static final int MAX_LITTER_SIZE = 5;
     private static final int MOUSE_FOOD_VALUE = 25;
-    private static final boolean NOCTURNAL = true;
+    private static final int LIZARD_FOOD_VALUE = 30;
     
     protected static final Random rand = Randomizer.getRandom();
 
@@ -50,15 +50,20 @@ public class Owl extends Animal
                 
                 // Only eat prey 50% of the time (reduce hunting efficiency)
                 if (rand.nextDouble() < 0.5) {
-                    if(animal instanceof Mouse && animal.isAlive()) {
+                    if(animal instanceof Lizard && animal.isAlive()) {
+                        animal.setDead();
+                        eat(LIZARD_FOOD_VALUE);
+                        return where;
+                    }
+                }
+                else if(animal instanceof Mouse && animal.isAlive()) {
                     // Check if the mouse is infected
-                        if (animal.isInfected() && Randomizer.getRandom().nextDouble() < PREDATOR_INFECTION_PROBABILITY) {
-                            setInfected();  // 80% chance to get infected
-                        }
+                    if (animal.isInfected() && Randomizer.getRandom().nextDouble() < PREDATOR_INFECTION_PROBABILITY) {
+                        setInfected();  // 80% chance to get infected
+                    }
                     animal.setDead();
                     eat(MOUSE_FOOD_VALUE);
                     return where;
-                    }
                 }
             }
         }      
