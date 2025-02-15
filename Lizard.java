@@ -140,7 +140,7 @@ public class Lizard extends Animal
     
     @Override
     protected double getRestingProbability() {
-        return 0.3;  // 50% chance to rest during non-active hours
+        return 0.2;  // 20% chance to rest during non-active hours
     }
     
 }

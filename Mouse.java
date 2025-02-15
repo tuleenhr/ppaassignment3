@@ -17,7 +17,6 @@ public class Mouse extends Animal
     private static final double BREEDING_PROBABILITY = 0.75;
     private static final int MAX_LITTER_SIZE = 8;
     private static final int BERRY_FOOD_VALUE = 15;
-    private static final boolean NOCTURNAL = true;
 
     /**
      * Create a mouse. A bear can be created as a new born (age zero
@@ -130,12 +129,12 @@ public class Mouse extends Animal
     
     @Override
     protected boolean isActiveTime() {
-        return !TimeKeeper.isDaytime(); // Active at night
+        return !TimeKeeper.isDaytime(); // Nocturnal (Active at night)
     }
     
     @Override
     protected double getRestingProbability() {
-        return 0.6;  // 60% chance to rest during non-active hours
+        return 0.7;  // 70% chance to rest during non-active hours
     }
     
 }

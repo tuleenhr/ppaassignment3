@@ -21,7 +21,7 @@ public class SimulatorView extends JFrame
     // Color used for objects that have no defined color.
     private static final Color UNKNOWN_COLOR = Color.gray;
 
-    private final String STEP_PREFIX = "Step: ";
+    private final String STEP_PREFIX = "Steps: ";
     private final String POPULATION_PREFIX = "Population: ";
     private final JLabel stepLabel; // Combined label for step and time
     private final JLabel population;
