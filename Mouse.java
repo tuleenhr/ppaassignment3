@@ -13,8 +13,8 @@ public class Mouse extends Animal
 {
      // Characteristics shared by all mice (class variables)
     private static final int BREEDING_AGE = 10;
-    private static final int MAX_AGE = 2 * 365 * 2;
-    private static final double BREEDING_PROBABILITY = 0.75;
+    private static final int MAX_AGE = 12;
+    private static final double BREEDING_PROBABILITY = 0.25;
     private static final int MAX_LITTER_SIZE = 8;
     private static final int BERRY_FOOD_VALUE = 15;
     private static final boolean NOCTURNAL = true;

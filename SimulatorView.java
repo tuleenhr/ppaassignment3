@@ -218,6 +218,7 @@ public class SimulatorView extends JFrame
             
             g.setColor(color);
             g.fillRect(x * xScale, y * yScale, xScale-1, yScale-1);
+
             if (infected) {    // if an animal is infected it has a red border.
                 g.setColor(Color.RED);
                 g.drawRect(x * xScale, y * yScale, xScale - 1, yScale - 1);

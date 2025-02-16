@@ -10,9 +10,9 @@ import java.util.Iterator;
 public class Lizard extends Animal
 {
      // Characteristics shared by all deer (class variables)
-    private static final int BREEDING_AGE = 2;
-    private static final int MAX_AGE = 4 * 365 * 2;
-    private static final double BREEDING_PROBABILITY = 0.1;
+    private static final int BREEDING_AGE = 5;
+    private static final int MAX_AGE = 6;
+    private static final double BREEDING_PROBABILITY = 0.30;
     private static final int MAX_LITTER_SIZE = 1;
     private static final int BERRY_FOOD_VALUE = 30;  
     private static final boolean NOCTURNAL = false; 
