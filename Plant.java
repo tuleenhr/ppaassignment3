@@ -29,7 +29,7 @@ public abstract class Plant
     /**
      * Make this plant act: grow and possibly spread seeds.
      */
-    public void act(Field currentField, Field nextFieldState) {
+    public void act(Field currentField, Field nextFieldState, Weather weather) {
         if(isAlive()) {
             // Only spread seeds if mature
             if(growthStage == 2 && TimeKeeper.isDaytime()) {
@@ -39,17 +39,24 @@ public abstract class Plant
             else if(growthStage < 2 && TimeKeeper.isDaytime()) {
                 // Apply seasonal growth modifier
                 double modifier = Season.getGrowthModifier(TimeKeeper.getCurrentSeason());
+    
+                // Increase growth chance if it's raining
+                if(weather.isRaining()) {
+                    modifier *= 2.0;  // 100% extra growth chance in rain
+                }
+    
                 if(rand.nextDouble() < getGrowthProbability() * modifier) {
                     grow();
                 }
             }
-            
+    
             // Stay in the same location if still alive
             if(isAlive()) {
                 nextFieldState.placePlant(this, getLocation());
             }
         }
     }
+
     
     /**
      * Check whether the plant is alive or not.

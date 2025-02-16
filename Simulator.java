@@ -19,8 +19,9 @@ public class Simulator
     private static final double BEAR_CREATION_PROBABILITY = 0.02;
     private static final double OWL_CREATION_PROBABILITY = 0.02;
     private static final double SNAKE_CREATION_PROBABILITY = 0.02;
-    private static final double MOUSE_CREATION_PROBABILITY = 0.05;
+    private static final double MOUSE_CREATION_PROBABILITY = 0.08;
     private static final double DEER_CREATION_PROBABILITY = 0.05;
+    private static final double LIZARD_CREATION_PROBABILITY = 0.03;
     private static final double BERRY_CREATION_PROBABILITY = 0.09;
     private static final double GRASS_CREATION_PROBABILITY = 0;   // grass will only spread in random patches
     
@@ -29,6 +30,7 @@ public class Simulator
     // The current step of the simulation.
     private int step;
     private int timeOfDay = 0; // 0 = Day, 1 = Night
+    private Weather weather = new Weather(); // weather (raining or sunny)
     // A graphical view of the simulation.
     private final SimulatorView view;
 
@@ -87,6 +89,8 @@ public class Simulator
     public void simulateOneStep()
     {
         step++;
+        String currentSeason = TimeKeeper.getCurrentSeason();
+        weather.updateWeather(currentSeason); // Update weather
         TimeKeeper.advanceTime(); // Advance time (toggle day/night)
 
         // Provide space for newborn animals.
@@ -103,14 +107,14 @@ public class Simulator
         // Update all plants
         for(Plant plant : field.getPlants()) {
             if(plant.isAlive()) {
-                plant.act(field, nextField);
+                plant.act(field, nextField, weather);
             }
         }       
         
         // Replace the old state with the new one.
         field = nextField;
         
-        view.showStatus(step, field);
+        view.showStatus(step, field, weather);
     }
         
     /**
@@ -120,7 +124,7 @@ public class Simulator
     {
         step = 0;
         populate();
-        view.showStatus(step, field);
+        view.showStatus(step, field, weather);
     }
     
     /**
@@ -159,18 +163,18 @@ public class Simulator
                 else if(chance <= BEAR_CREATION_PROBABILITY + OWL_CREATION_PROBABILITY + SNAKE_CREATION_PROBABILITY + MOUSE_CREATION_PROBABILITY + DEER_CREATION_PROBABILITY) {
                     field.placeAnimal(new Deer(true, field, location), location);
                 }
-                else if(chance <= BEAR_CREATION_PROBABILITY + OWL_CREATION_PROBABILITY + SNAKE_CREATION_PROBABILITY + MOUSE_CREATION_PROBABILITY + DEER_CREATION_PROBABILITY + BERRY_CREATION_PROBABILITY) {
+                else if(chance <= BEAR_CREATION_PROBABILITY + OWL_CREATION_PROBABILITY + SNAKE_CREATION_PROBABILITY + MOUSE_CREATION_PROBABILITY + DEER_CREATION_PROBABILITY + LIZARD_CREATION_PROBABILITY) {
+                    field.placeAnimal(new Lizard(true, field, location), location);
+                }
+                else if(chance <= BEAR_CREATION_PROBABILITY + OWL_CREATION_PROBABILITY + SNAKE_CREATION_PROBABILITY + MOUSE_CREATION_PROBABILITY + DEER_CREATION_PROBABILITY + LIZARD_CREATION_PROBABILITY +BERRY_CREATION_PROBABILITY) {
                     field.placePlant(new Berry(location, true), location);
                 }
-                else if(chance <= BEAR_CREATION_PROBABILITY + OWL_CREATION_PROBABILITY + SNAKE_CREATION_PROBABILITY + MOUSE_CREATION_PROBABILITY + DEER_CREATION_PROBABILITY + BERRY_CREATION_PROBABILITY + GRASS_CREATION_PROBABILITY) {
+                else if(chance <= BEAR_CREATION_PROBABILITY + OWL_CREATION_PROBABILITY + SNAKE_CREATION_PROBABILITY + MOUSE_CREATION_PROBABILITY + DEER_CREATION_PROBABILITY + LIZARD_CREATION_PROBABILITY + BERRY_CREATION_PROBABILITY + GRASS_CREATION_PROBABILITY) {
                     field.placePlant(new Grass(location, true), location);
                 }
             }
         }
     }
-
-
-
 
     /**
      * Pause for a given time.
@@ -185,7 +189,5 @@ public class Simulator
             // ignore
         }
     }
-    
-
     
 }

@@ -46,8 +46,9 @@ public class SimulatorView extends JFrame
         setColor(Bear.class, new Color(139, 69, 19));      // Saddle Brown for Bear
         setColor(Owl.class, new Color(128, 128, 128));     // Gray for Owl
         setColor(Snake.class, new Color(50, 205, 50));     // Lime Green for Snake
-        setColor(Deer.class, new Color(205, 133, 63));     // Peru (light brown) for Deer
-        setColor(Mouse.class, new Color(255, 215, 0));     // Gold for Mouse - much brighter
+        setColor(Deer.class, new Color(205, 133, 63));     // Peru light brown for Deer
+        setColor(Mouse.class, new Color(255, 215, 0));     // Gold for Mouse
+        setColor(Lizard.class, new Color(61, 127, 242));     // Light blue for Lizard
 
         // Plants
         setColor(Berry.class, new Color(148, 0, 211));     // Dark Violet for Berry
@@ -101,13 +102,15 @@ public class SimulatorView extends JFrame
      * @param step Which iteration step it is.
      * @param field The field whose status is to be displayed.
      */
-    public void showStatus(int step, Field field)
+    public void showStatus(int step, Field field, Weather weather)
     {
         if(!isVisible()) {
             setVisible(true);
         }
         
-        stepLabel.setText(STEP_PREFIX + step + " | " + TimeKeeper.getTimeString());
+        stepLabel.setText(STEP_PREFIX + step + " | " + TimeKeeper.getTimeString() + 
+                  (weather.isRaining() ? " | 🌧️ Rain" : ""));
+
         stats.reset();
         
         fieldView.preparePaint();
@@ -120,14 +123,14 @@ public class SimulatorView extends JFrame
                 
                 if(animal != null) {
                     stats.incrementCount(animal.getClass());
-                    fieldView.drawMark(col, row, getColor(animal.getClass()));
+                    fieldView.drawMark(col, row, getColor(animal.getClass()), animal.isInfected());
                 }
                 else if(plant != null) {
                     stats.incrementCount(plant.getClass());
-                    fieldView.drawMark(col, row, getColor(plant.getClass()));
+                    fieldView.drawMark(col, row, getColor(plant.getClass()),false);
                 }
                 else {
-                    fieldView.drawMark(col, row, EMPTY_COLOR);
+                    fieldView.drawMark(col, row, EMPTY_COLOR, false);
                 }
             }
         }
@@ -208,10 +211,17 @@ public class SimulatorView extends JFrame
         /**
          * Paint on grid location on this field in a given color.
          */
-        public void drawMark(int x, int y, Color color)
+        public void drawMark(int x, int y, Color color, boolean infected)
         {
+            g.setColor(EMPTY_COLOR); // clear old colour marks
+            g.fillRect(x * xScale, y * yScale, xScale, yScale);
+            
             g.setColor(color);
             g.fillRect(x * xScale, y * yScale, xScale-1, yScale-1);
+            if (infected) {    // if an animal is infected it has a red border.
+                g.setColor(Color.RED);
+                g.drawRect(x * xScale, y * yScale, xScale - 1, yScale - 1);
+            }
         }
 
         /**

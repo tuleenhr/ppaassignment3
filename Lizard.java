@@ -1,25 +1,21 @@
 import java.util.List;
 import java.util.Iterator;
-import java.util.Random;
 
 /**
  * A simple model of a fox.
  * Foxes age, move, eat rabbits, and die.
- * 
  * @author David J. Barnes and Michael Kölling
  * @version 7.1
  */
-public class Snake extends Animal
+public class Lizard extends Animal
 {
-    // Characteristics shared by all snakes (class variables)
-    private static final int BREEDING_AGE = 10;
-    private static final int MAX_AGE = 10 * 365 * 2;
-    private static final double BREEDING_PROBABILITY = 0.40;
-    private static final int MAX_LITTER_SIZE = 5;
-    private static final int MOUSE_FOOD_VALUE = 20;
-    private static final int LIZARD_FOOD_VALUE = 25;
-    
-    protected static final Random rand = Randomizer.getRandom();
+     // Characteristics shared by all deer (class variables)
+    private static final int BREEDING_AGE = 2;
+    private static final int MAX_AGE = 4 * 365 * 2;
+    private static final double BREEDING_PROBABILITY = 0.1;
+    private static final int MAX_LITTER_SIZE = 1;
+    private static final int BERRY_FOOD_VALUE = 30;  
+    private static final boolean NOCTURNAL = false; 
     
     /**
      * Create a bear. A bear can be created as a new born (age zero
@@ -28,7 +24,7 @@ public class Snake extends Animal
      * @param randomAge If true, the bear will have random age and hunger level.
      * @param location The location within the field.
      */
-    public Snake(boolean randomAge, Field field, Location location) {
+    public Lizard(boolean randomAge, Field field, Location location) {
         super(location, randomAge, BREEDING_AGE, MAX_AGE);
     }
     
@@ -41,29 +37,32 @@ public class Snake extends Animal
     @Override
     protected Location findFood(Field field) {
         if (getFoodLevel() < getMaxFoodValue() / 2) { // Only search for food if hungry
-    
             List<Location> adjacent = field.getAdjacentLocations(getLocation());
             Iterator<Location> it = adjacent.iterator();
             
+            // First, check if there are any predators nearby
+            boolean dangerNearby = false;
+            for(Location loc : adjacent) {
+                Animal animal = field.getAnimalAt(loc);
+                if(animal instanceof Owl || animal instanceof Snake) {
+                    dangerNearby = true;
+                    break;
+                }
+            }
+            
+            // If danger is nearby, mice might skip eating to move to safety
+            if(dangerNearby && getFoodLevel() > BERRY_FOOD_VALUE/2) {
+                return null;
+            }
+            
+            // Look for food if hungry enough or no danger
             while(it.hasNext()) {
                 Location where = it.next();
-                Animal animal = field.getAnimalAt(where);
+                Plant plant = field.getPlantAt(where);
                 
-                // Only eat prey 50% of the time (reduce hunting efficiency)
-                if (rand.nextDouble() < 0.5) {
-                    if(animal instanceof Lizard && animal.isAlive()) {
-                        animal.setDead();
-                        eat(LIZARD_FOOD_VALUE);
-                        return where;
-                    }
-                }
-                else if(animal instanceof Mouse && animal.isAlive()) {
-                    // Check if the mouse is infected
-                    if (animal.isInfected() && Randomizer.getRandom().nextDouble() < PREDATOR_INFECTION_PROBABILITY) {
-                        setInfected();  // 80% chance to get infected
-                    }
-                    animal.setDead();
-                    eat(MOUSE_FOOD_VALUE);
+                if(plant instanceof Berry && plant.isAlive()) {
+                    plant.setDead();
+                    eat(BERRY_FOOD_VALUE);
                     return where;
                 }
             }
@@ -76,7 +75,7 @@ public class Snake extends Animal
      * @param foodValue The amount of food gained.
      */
     protected void eat(int foodValue) {
-        if (getFoodLevel() < getMaxFoodValue() / 4) { // Only eat when food level is below 25%
+        if (getFoodLevel() < getMaxFoodValue() / 2) { // Only eat when food level is below 50%
             setFoodLevel(getFoodLevel() + foodValue);
         }
     }
@@ -89,11 +88,21 @@ public class Snake extends Animal
      */
     @Override
     protected void createYoung(boolean randomAge, Location location, Field field) {
-        Snake young = new Snake(randomAge, field, location);
+        Lizard young = new Lizard(randomAge, field, location);
         field.placeAnimal(young, location);
     }
     
     // Implementation of abstract methods
+    @Override
+    protected boolean canFindMate(Field field) {
+        return true;  // No mate needed
+    }
+    
+    @Override
+    protected boolean reproducesSexually() {
+        return false;
+    }
+    
     @Override
     protected int getMaxAge() {
         return MAX_AGE;
@@ -116,13 +125,12 @@ public class Snake extends Animal
     
     @Override
     protected int getMaxFoodValue() {
-        return MOUSE_FOOD_VALUE;  // Maximum food value from eating a deer
+        return BERRY_FOOD_VALUE;  //
     }
     
-      @Override
+    @Override
     protected int getInitialFoodLevel() {
-        // Random value between mouse food values
-        return 30;
+        return 40;
     }
     
     @Override
@@ -132,7 +140,7 @@ public class Snake extends Animal
     
     @Override
     protected double getRestingProbability() {
-        return 0.7;  // 70% chance to rest during non-active hours
+        return 0.3;  // 50% chance to rest during non-active hours
     }
     
 }

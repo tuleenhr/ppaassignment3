@@ -14,7 +14,7 @@ public class Bear extends Animal
      // Characteristics shared by all bears (class variables)
     private static final int BREEDING_AGE = 10;
     private static final int MAX_AGE = 15 * 365 * 2;
-    private static final double BREEDING_PROBABILITY = 0.13;
+    private static final double BREEDING_PROBABILITY = 0.15;
     private static final int MAX_LITTER_SIZE = 5;
     private static final int DEER_FOOD_VALUE = 60;
     private static final int MOUSE_FOOD_VALUE = 25;
@@ -76,7 +76,7 @@ public class Bear extends Animal
      * @param foodValue The amount of food gained.
      */
     protected void eat(int foodValue) {
-        if (getFoodLevel() < getMaxFoodValue() / 2) { // Only eat when food level is below 50%
+        if (getFoodLevel() < getMaxFoodValue() / 4) { // Only eat when food level is below 25%
             setFoodLevel(getFoodLevel() + foodValue);
         }
     }
