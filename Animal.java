@@ -176,20 +176,20 @@ public abstract class Animal
     }
     
     protected boolean canFindMate(Field field) {
-    int searchRadius = 1; // breeding distances
-
-    for (int i = 0; i < searchRadius; i++) {
-        List<Location> nearbyLocations = field.getAdjacentLocations(getLocation());
-
-        for (Location loc : nearbyLocations) {
-            Animal potentialMate = field.getAnimalAt(loc);
-            if (potentialMate != null && potentialMate.getClass() == this.getClass() && potentialMate.isAlive()) {
-                return true; // Found a mate within range
+        int searchRadius = 1; // breeding distances
+    
+        for (int i = 0; i < searchRadius; i++) {
+            List<Location> nearbyLocations = field.getAdjacentLocations(getLocation());
+    
+            for (Location loc : nearbyLocations) {
+                Animal potentialMate = field.getAnimalAt(loc);
+                if (potentialMate != null && potentialMate.getClass() == this.getClass() && potentialMate.isAlive()) {
+                    return true; // Found a mate within range
+                }
             }
         }
+        return false; // No mate found
     }
-    return false; // No mate found
-}
 
     
     protected void giveBirth(Field nextFieldState, List<Location> freeLocations) {

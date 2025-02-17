@@ -12,9 +12,9 @@ import java.util.Random;
 public class Bear extends Animal
 {
      // Characteristics shared by all bears (class variables)
-    private static final int BREEDING_AGE = 3;
-    private static final int MAX_AGE = 10;
-    private static final double BREEDING_PROBABILITY = 0.15;
+    private static final int BREEDING_AGE = 4;
+    private static final int MAX_AGE = 8;
+    private static final double BREEDING_PROBABILITY = 0.20;
     private static final int MAX_LITTER_SIZE = 5;
     private static final int DEER_FOOD_VALUE = 60;
     private static final int MOUSE_FOOD_VALUE = 25;

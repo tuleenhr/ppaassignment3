@@ -13,8 +13,8 @@ public class Owl extends Animal
 {
      // Characteristics shared by all bears (class variables)
     private static final int BREEDING_AGE = 3;
-    private static final int MAX_AGE = 9;
-    private static final double BREEDING_PROBABILITY = 0.15;
+    private static final int MAX_AGE = 7;
+    private static final double BREEDING_PROBABILITY = 0.20;
     private static final int MAX_LITTER_SIZE = 5;
     private static final int MOUSE_FOOD_VALUE = 25;
     private static final int LIZARD_FOOD_VALUE = 30;
