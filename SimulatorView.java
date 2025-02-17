@@ -21,7 +21,7 @@ public class SimulatorView extends JFrame
     // Color used for objects that have no defined color.
     private static final Color UNKNOWN_COLOR = Color.gray;
 
-    private final String STEP_PREFIX = "Steps: ";
+    private final String STEP_PREFIX = "Step: ";
     private final String POPULATION_PREFIX = "Population: ";
     private final JLabel stepLabel; // Combined label for step and time
     private final JLabel population;
@@ -48,11 +48,7 @@ public class SimulatorView extends JFrame
         setColor(Snake.class, new Color(50, 205, 50));     // Lime Green for Snake
         setColor(Deer.class, new Color(205, 133, 63));     // Peru light brown for Deer
         setColor(Mouse.class, new Color(255, 215, 0));     // Gold for Mouse
-<<<<<<< HEAD
         setColor(Lizard.class, new Color(61, 127, 242));     // Light blue for Lizard
-=======
-        setColor(Lizard.class, new Color(61, 127, 242));     // light blue fpr snake
->>>>>>> e4177dceb871ae3659bfb108ef9bb7774622d6b1
 
         // Plants
         setColor(Berry.class, new Color(148, 0, 211));     // Dark Violet for Berry

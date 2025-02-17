@@ -189,9 +189,4 @@ public class Simulator
             // ignore
         }
     }
-    
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> e4177dceb871ae3659bfb108ef9bb7774622d6b1

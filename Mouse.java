@@ -12,15 +12,9 @@ import java.util.Random;
 public class Mouse extends Animal
 {
      // Characteristics shared by all mice (class variables)
-<<<<<<< HEAD
     private static final int BREEDING_AGE = 9;
     private static final int MAX_AGE = 12;
     private static final double BREEDING_PROBABILITY = 0.18;
-=======
-    private static final int BREEDING_AGE = 10;
-    private static final int MAX_AGE = 2 * 365 * 2;
-    private static final double BREEDING_PROBABILITY = 0.75;
->>>>>>> e4177dceb871ae3659bfb108ef9bb7774622d6b1
     private static final int MAX_LITTER_SIZE = 8;
     private static final int BERRY_FOOD_VALUE = 15;
 
