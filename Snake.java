@@ -127,12 +127,12 @@ public class Snake extends Animal
     
     @Override
     protected boolean isActiveTime() {
-        return TimeKeeper.isDaytime(); // Active during the day
+        return !TimeKeeper.isDaytime(); // Nocturnal (Active during the day)
     }
     
     @Override
     protected double getRestingProbability() {
-        return 0.7;  // 70% chance to rest during non-active hours
+        return 0.8;  // 80% chance to rest during non-active hours
     }
     
 }

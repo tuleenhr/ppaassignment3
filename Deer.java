@@ -16,7 +16,6 @@ public class Deer extends Animal
     private static final int MAX_LITTER_SIZE = 4;
     private static final int GRASS_FOOD_VALUE = 20;
     private static final int BERRY_FOOD_VALUE = 15;  
-    private static final boolean NOCTURNAL = false; 
     
     /**
      * Create a bear. A bear can be created as a new born (age zero
@@ -139,12 +138,12 @@ public class Deer extends Animal
     
     @Override
     protected boolean isActiveTime() {
-        return TimeKeeper.isDaytime(); // Active during the day
+        return TimeKeeper.isDaytime(); //Dinural (Active during the day)
     }
     
     @Override
     protected double getRestingProbability() {
-        return 0.5;  // 50% chance to rest during non-active hours
+        return 0.4;  // 40% chance to rest during non-active hours
     }
     
 }

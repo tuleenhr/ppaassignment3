@@ -10,9 +10,15 @@ import java.util.Iterator;
 public class Lizard extends Animal
 {
      // Characteristics shared by all deer (class variables)
+<<<<<<< HEAD
     private static final int BREEDING_AGE = 3;
     private static final int MAX_AGE = 6;
     private static final double BREEDING_PROBABILITY = 0.30;
+=======
+    private static final int BREEDING_AGE = 2;
+    private static final int MAX_AGE = 4 * 365 * 2;
+    private static final double BREEDING_PROBABILITY = 0.1;
+>>>>>>> e4177dceb871ae3659bfb108ef9bb7774622d6b1
     private static final int MAX_LITTER_SIZE = 1;
     private static final int BERRY_FOOD_VALUE = 30;  
     private static final boolean NOCTURNAL = false; 
@@ -140,7 +146,14 @@ public class Lizard extends Animal
     
     @Override
     protected double getRestingProbability() {
+<<<<<<< HEAD
         return 0.3;  // 50% chance to rest during non-active hours
     }
     
 }
+=======
+        return 0.2;  // 20% chance to rest during non-active hours
+    }
+    
+}
+>>>>>>> e4177dceb871ae3659bfb108ef9bb7774622d6b1

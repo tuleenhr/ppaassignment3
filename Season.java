@@ -13,10 +13,10 @@ public class Season
     public static final String WINTER = "Winter";
     
     // Plant growth modifiers for each season
-    private static final double SPRING_GROWTH = 1.2;  // 20% boost
+    private static final double SPRING_GROWTH = 1.3;  // 30% boost
     private static final double SUMMER_GROWTH = 1.0;  // Normal
     private static final double AUTUMN_GROWTH = 0.8;  // 20% reduction
-    private static final double WINTER_GROWTH = 0.4;  // 60% reduction
+    private static final double WINTER_GROWTH = 0.5;  // 50% reduction
     
     /**
      * Get the current season name from a month number (0-11)
