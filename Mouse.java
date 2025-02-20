@@ -3,10 +3,19 @@ import java.util.Iterator;
 import java.util.Random;
 
 /**
- * A simple model of a fox.
- * Foxes age, move, eat rabbits, and die.
+ * Models a Mouse in the ecosystem simulation.
+ * Mice are small prey animals that eat berries and are hunted by multiple predators.
+ * They are nocturnal and serve as disease vectors in the ecosystem.
+ * They have high breeding rates but face significant predation pressure.
  * 
- * @author David J. Barnes and Michael Kölling
+ * Key characteristics:
+ * - Nocturnal (active during night)
+ * - Feeds on berries (food value: 15)
+ * - Can carry and transmit disease (10% chance at birth)
+ * - High breeding rate with large litter size
+ * - Avoids predators (bears, owls, snakes)
+ * 
+ * @author Tuleen Rowaihy & Hamed Latif
  * @version 7.1
  */
 public class Mouse extends Animal
@@ -33,10 +42,12 @@ public class Mouse extends Animal
     }
     
     /**
-     * Look for prey adjacent to the current location.
-     * Only the first live prey is eaten.
+     * Look for food around the mouse.
+     * Checks for nearby predators first and may skip eating if predators are present.
+     * Only eats berries and must manage predator avoidance.
+     * 
      * @param field The field currently occupied.
-     * @return Where food was found, or null if it wasn't.
+     * @return Where food was found, or null if none found.
      */
     @Override
     protected Location findFood(Field field) {
@@ -74,9 +85,11 @@ public class Mouse extends Animal
         return null;
     }
     
-    /**
-     * Eat food but only if hungry.
-     * @param foodValue The amount of food gained.
+     /**
+     * Make the mouse eat food.
+     * Only eats when below 50% food level to maintain realistic behavior.
+     * 
+     * @param foodValue Amount of food (nutrition) to add.
      */
     protected void eat(int foodValue) {
         if (getFoodLevel() < getMaxFoodValue() / 2) { // Only eat when food level is below 50%

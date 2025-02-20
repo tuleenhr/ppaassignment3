@@ -4,14 +4,19 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * A graphical view of the simulation grid.
- * The view displays a colored rectangle for each location 
- * representing its contents. It uses a default background color.
- * Colors for each type of species can be defined using the
- * setColor method.
+ * Provides a graphical view of the simulation field.
+ * Displays a colored grid showing the state of the field, with different colors
+ * representing different species. Includes statistics about population counts
+ * and simulation status.
+ * 
+ * The view consists of:
+ * - A colored grid showing animals and plants
+ * - Step counter and time display
+ * - Population statistics
+ * - Weather indicator
  * 
  * @author David J. Barnes and Michael Kölling
- * @version 7.0
+ * @version 7.1
  */
 public class SimulatorView extends JFrame
 {

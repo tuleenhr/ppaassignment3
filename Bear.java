@@ -3,10 +3,19 @@ import java.util.Iterator;
 import java.util.Random;
 
 /**
- * A simple model of a fox.
- * Foxes age, move, eat rabbits, and die.
+ * Models a Bear in the ecosystem simulation.
+ * Bears are apex predators that hunt both deer and mice, with deer being their preferred prey.
+ * They are diurnal (active during day) and require significant food to survive.
+ * Bears can be infected by eating diseased prey and have high breeding requirements.
  * 
- * @author David J. Barnes and Michael Kölling
+ * Key characteristics:
+ * - Diurnal (active during daytime)
+ * - Hunts deer (food value: 60) and mice (food value: 25)
+ * - 50% chance to rest during night
+ * - Requires male and female for breeding
+ * - Can be infected through eating diseased prey
+ * 
+ * @author Tuleen Rowaihy & Hamed Latif
  * @version 7.1
  */
 public class Bear extends Animal
@@ -22,21 +31,24 @@ public class Bear extends Animal
     protected static final Random rand = Randomizer.getRandom();
 
     /**
-     * Create a bear. A bear can be created as a new born (age zero
-     * and not hungry) or with a random age and food level.
+     * Create a new bear. Bears can be created as newborn (age zero and not hungry)
+     * or with random age and hunger level.
      * 
-     * @param randomAge If true, the bear will have random age and hunger level.
+     * @param randomAge If true, the bear starts with random age and hunger.
+     * @param field The field currently being used.
      * @param location The location within the field.
      */
     public Bear(boolean randomAge, Field field, Location location) {
         super(location, randomAge, BREEDING_AGE, MAX_AGE);
     }
     
-    /**
+     /**
      * Look for prey adjacent to the current location.
-     * Only the first live prey is eaten.
+     * Bears prioritize deer over mice and only hunt when hungry.
+     * Implements 50% hunting efficiency reduction and disease transmission.
+     * 
      * @param field The field currently occupied.
-     * @return Where food was found, or null if it wasn't.
+     * @return Where food was found, or null if none found.
      */
     @Override
     protected Location findFood(Field field) {
@@ -71,8 +83,10 @@ public class Bear extends Animal
     }
     
     /**
-     * Eat food but only if hungry.
-     * @param foodValue The amount of food gained.
+     * Make the bear eat prey.
+     * Bears only eat when very hungry (below 25% food level).
+     * 
+     * @param foodValue The amount of food gained from eating prey.
      */
     protected void eat(int foodValue) {
         if (getFoodLevel() < getMaxFoodValue() / 4) { // Only eat when food level is below 25%
@@ -92,7 +106,7 @@ public class Bear extends Animal
         field.placeAnimal(young, location);
     }
     
-    // Implementation of abstract methods
+    // Implementation of abstract methods with behavioral characteristics
     @Override
     protected int getMaxAge() {
         return MAX_AGE;

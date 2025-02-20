@@ -2,9 +2,19 @@ import java.util.List;
 import java.util.Iterator;
 
 /**
- * A simple model of a fox.
- * Foxes age, move, eat rabbits, and die.
- * @author David J. Barnes and Michael Kölling
+ * Models a Deer in the ecosystem simulation.
+ * Deer are large herbivores that feed on grass and berries.
+ * They implement complex predator avoidance behavior and are prey for bears.
+ * Active during daylight hours with selective feeding patterns.
+ * 
+ * Key characteristics:
+ * - Diurnal (active during day)
+ * - Feeds on grass (food value: 20) and berries (food value: 15)
+ * - Checks for predators before feeding
+ * - 40% chance to rest during night
+ * - Requires proximity mating
+ * 
+ * @author Tuleen Rowaihy & Hamed Latif
  * @version 7.1
  */
 public class Deer extends Animal
@@ -94,7 +104,7 @@ public class Deer extends Animal
     }
     
     /**
-     * Create a new bear.
+     * Create a new deer.
      * @param randomAge Whether to create a bear with random age or as a baby.
      * @param location Where to create the bear.
      * @param field The field to place the bear in.

@@ -3,10 +3,19 @@ import java.util.Iterator;
 import java.util.Random;
 
 /**
- * A simple model of a fox.
- * Foxes age, move, eat rabbits, and die.
+ * Models an Owl in the ecosystem simulation.
+ * Owls are nocturnal predators specializing in hunting mice and lizards.
+ * They are most active at night and compete with snakes for prey.
+ * Can become infected from eating diseased mice.
  * 
- * @author David J. Barnes and Michael Kölling
+ * Key characteristics:
+ * - Nocturnal (active during night)
+ * - Hunts mice (food value: 25) and lizards (food value: 30)
+ * - 70% chance to rest during day
+ * - Can be infected through eating diseased mice
+ * - Reduced hunting efficiency (50% success rate)
+ * 
+ * @author Tuleen Rowaihy & Hamed Latif
  * @version 7.1
  */
 public class Owl extends Animal
@@ -22,10 +31,11 @@ public class Owl extends Animal
     protected static final Random rand = Randomizer.getRandom();
 
     /**
-     * Create a bear. A bear can be created as a new born (age zero
-     * and not hungry) or with a random age and food level.
+     * Create a new owl. Owls can be created as newborn (age zero and not hungry)
+     * or with random age and hunger level.
      * 
-     * @param randomAge If true, the bear will have random age and hunger level.
+     * @param randomAge If true, the owl starts with random age and hunger.
+     * @param field The field currently being used.
      * @param location The location within the field.
      */
     public Owl(boolean randomAge, Field field, Location location) {
@@ -34,9 +44,11 @@ public class Owl extends Animal
     
     /**
      * Look for prey adjacent to the current location.
-     * Only the first live prey is eaten.
+     * Owls prefer lizards over mice but will eat either.
+     * Implements 50% hunting efficiency reduction and disease transmission.
+     * 
      * @param field The field currently occupied.
-     * @return Where food was found, or null if it wasn't.
+     * @return Where food was found, or null if none found.
      */
     @Override
     protected Location findFood(Field field) {
@@ -71,8 +83,10 @@ public class Owl extends Animal
     }
     
     /**
-     * Eat food but only if hungry.
-     * @param foodValue The amount of food gained.
+     * Make the owl eat prey.
+     * Owls only eat when very hungry (below 25% food level).
+     * 
+     * @param foodValue The amount of food gained from eating prey.
      */
     protected void eat(int foodValue) {
         if (getFoodLevel() < getMaxFoodValue() / 4) { // Only eat when food level is below 25%
@@ -81,10 +95,11 @@ public class Owl extends Animal
     }
     
     /**
-     * Create a new bear.
-     * @param randomAge Whether to create a bear with random age or as a baby.
-     * @param location Where to create the bear.
-     * @param field The field to place the bear in.
+     * Create a new baby owl.
+     * 
+     * @param randomAge Whether to randomize the baby's age.
+     * @param location Where to place the baby.
+     * @param field The field to place the baby in.
      */
     @Override
     protected void createYoung(boolean randomAge, Location location, Field field) {

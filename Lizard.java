@@ -2,9 +2,19 @@ import java.util.List;
 import java.util.Iterator;
 
 /**
- * A simple model of a fox.
- * Foxes age, move, eat rabbits, and die.
- * @author David J. Barnes and Michael Kölling
+ * Models a Lizard in the ecosystem simulation.
+ * Lizards are unique as they reproduce asexually and specialize in eating berries.
+ * They are prey for both owls and snakes, active during day.
+ * Implements simplified breeding due to asexual reproduction.
+ * 
+ * Key characteristics:
+ * - Diurnal (active during day)
+ * - Asexual reproduction (no mate needed)
+ * - Feeds exclusively on berries (food value: 30)
+ * - Prey for owls and snakes
+ * - 30% chance to rest at night
+ * 
+ * @author Tuleen Rowaihy & Hamed Latif
  * @version 7.1
  */
 public class Lizard extends Animal
@@ -17,11 +27,11 @@ public class Lizard extends Animal
     private static final int BERRY_FOOD_VALUE = 30;  
     private static final boolean NOCTURNAL = false; 
     
-    /**
-     * Create a bear. A bear can be created as a new born (age zero
-     * and not hungry) or with a random age and food level.
+     /**
+     * Create a new lizard.
      * 
-     * @param randomAge If true, the bear will have random age and hunger level.
+     * @param randomAge If true, starts with random age and hunger.
+     * @param field The field currently being used.
      * @param location The location within the field.
      */
     public Lizard(boolean randomAge, Field field, Location location) {
@@ -29,10 +39,12 @@ public class Lizard extends Animal
     }
     
     /**
-     * Look for prey adjacent to the current location.
-     * Only the first live prey is eaten.
+     * Look for food around the lizard.
+     * Checks for predators before feeding and only eats berries.
+     * Will skip eating to avoid predators unless very hungry.
+     * 
      * @param field The field currently occupied.
-     * @return Where food was found, or null if it wasn't.
+     * @return Where food was found, or null if none found.
      */
     @Override
     protected Location findFood(Field field) {
@@ -71,8 +83,11 @@ public class Lizard extends Animal
     }
     
     /**
-     * Eat food but only if hungry.
-     * @param foodValue The amount of food gained.
+     * Create a new baby lizard through asexual reproduction.
+     * 
+     * @param randomAge Whether to create with random age.
+     * @param location Where to place the baby.
+     * @param field The field to place the baby in.
      */
     protected void eat(int foodValue) {
         if (getFoodLevel() < getMaxFoodValue() / 2) { // Only eat when food level is below 50%
@@ -92,7 +107,7 @@ public class Lizard extends Animal
         field.placeAnimal(young, location);
     }
     
-    // Implementation of abstract methods
+    // Special methods for asexual reproduction
     @Override
     protected boolean canFindMate(Field field) {
         return true;  // No mate needed
@@ -102,7 +117,7 @@ public class Lizard extends Animal
     protected boolean reproducesSexually() {
         return false;
     }
-    
+    // Implementation of abstract methods with behavioral characteristics
     @Override
     protected int getMaxAge() {
         return MAX_AGE;

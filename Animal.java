@@ -2,32 +2,48 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Common elements of foxes and rabbits.
+ * Abstract class representing common elements of all animals in the ecosystem simulation.
+ * This class provides the base functionality for all animal types including:
+ * - Basic life cycle (birth, aging, death)
+ * - Food and hunger management
+ * - Movement and location tracking
+ * - Breeding behaviors
+ * - Disease mechanics
+ * - Activity cycles (day/night)
  *
- * @author David J. Barnes and Michael Kölling
- * @version 7.0
+ * @author David J. Barnes, Michael Kölling, Tuleen Rowaihy, Hamed Latif
+ * @version 8.0
  */
 public abstract class Animal
 {
+    // Random number generator for probabilistic behaviors
     private static final Random rand = Randomizer.getRandom();
     
-    // Instance variables
-    private boolean alive;
-    private Location location;
-    private final boolean isMale;
-    private int age;
-    private int foodLevel;
-    private int breedingAge;
-    private boolean infected = false;  // tracks if the animal is infected
-    private boolean justInfected = false;  // track new infections
-    protected static final double PREDATOR_INFECTION_PROBABILITY = 0.8;  // 80% chance of infection when eating an infected mouse
-    private static final double PREDATOR_DEATH_PROBABILITY = 0.4;  // 70% chance to die next cycle if infected
-
+    // Core animal characteristics
+    private boolean alive;         // Whether the animal is currently alive
+    private Location location;     // Current position in the field
+    private final boolean isMale;  // Gender of the animal (affects breeding)
+    private int age;              // Current age in steps
+    private int foodLevel;        // Current food level (0 = starving)
+    private int breedingAge;      // Age at which the animal can start breeding
+    
+    // Disease tracking variables
+    private boolean infected = false;      // Current infection status
+    private boolean justInfected = false;  // Tracks new infections for immediate effects
+    
+    // Disease-related probabilities
+    protected static final double PREDATOR_INFECTION_PROBABILITY = 0.8;  // Chance of infection when eating infected prey
+    private static final double PREDATOR_DEATH_PROBABILITY = 0.4;        // Chance of death after infection
     
     /**
-     * Constructor for objects of class Animal.
-     * @param location The animal's location.
-     * @param randomize A boolean to determine random gender assignment
+     * Creates a new animal with specified characteristics.
+     * If randomized, the animal starts with random age and gender.
+     * If not randomized, starts as a newborn female.
+     * 
+     * @param location The animal's starting location
+     * @param randomize Whether to randomize initial characteristics
+     * @param breedingAge Age at which the animal can start breeding
+     * @param lifespan Maximum possible age of the animal
      */
     public Animal(Location location, boolean randomize, int breedingAge, int lifespan) {
         this.alive = true;
@@ -46,9 +62,15 @@ public abstract class Animal
     }
     
     /**
-     * Act.
-     * @param currentField The current state of the field.
-     * @param nextFieldState The new state being built.
+     * Main action method called each simulation step.
+     * Handles:
+     * - Aging and hunger
+     * - Disease effects
+     * - Movement and hunting
+     * - Breeding
+     * 
+     * @param currentField Current state of the field
+     * @param nextFieldState Next state being built
      */
     public void act(Field currentField, Field nextFieldState) {
         incrementAge();
@@ -245,9 +267,9 @@ public abstract class Animal
     }
     
     /**
-     * Handle diseases: If a predator that just got infected, 
-     * there is a 70% chance it dies immediately. 
-     * If not, heals after one cycle
+     * Handles disease progression and effects.
+     * Newly infected predators have a chance to die immediately.
+     * Otherwise, infection clears after one cycle.
      */
     private void handleDisease() {
         if (infected && justInfected) {

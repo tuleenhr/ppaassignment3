@@ -3,10 +3,18 @@ import java.util.Iterator;
 import java.util.Random;
 
 /**
- * A simple model of a fox.
- * Foxes age, move, eat rabbits, and die.
+ * Models a Snake in the ecosystem simulation.
+ * Snakes are nocturnal predators that compete with owls for mice and lizards.
+ * They have a high resting probability during the day and can become infected from prey.
  * 
- * @author David J. Barnes and Michael Kölling
+ * Key characteristics:
+ * - Nocturnal (active during night)
+ * - Hunts mice (food value: 20) and lizards (food value: 25)
+ * - 80% chance to rest during day
+ * - Can be infected through eating diseased mice
+ * - Reduced hunting efficiency (50% success rate)
+ * 
+ * @author Tuleen Rowaihy & Hamed Latif
  * @version 7.1
  */
 public class Snake extends Animal
@@ -22,10 +30,10 @@ public class Snake extends Animal
     protected static final Random rand = Randomizer.getRandom();
     
     /**
-     * Create a bear. A bear can be created as a new born (age zero
-     * and not hungry) or with a random age and food level.
+     * Create a new snake.
      * 
-     * @param randomAge If true, the bear will have random age and hunger level.
+     * @param randomAge If true, starts with random age and hunger.
+     * @param field The field currently being used.
      * @param location The location within the field.
      */
     public Snake(boolean randomAge, Field field, Location location) {
@@ -34,9 +42,11 @@ public class Snake extends Animal
     
     /**
      * Look for prey adjacent to the current location.
-     * Only the first live prey is eaten.
+     * Snakes prefer lizards over mice and implement hunting efficiency reduction.
+     * Can become infected from eating infected mice.
+     * 
      * @param field The field currently occupied.
-     * @return Where food was found, or null if it wasn't.
+     * @return Where food was found, or null if none found.
      */
     @Override
     protected Location findFood(Field field) {
@@ -72,8 +82,10 @@ public class Snake extends Animal
     }
     
     /**
-     * Eat food but only if hungry.
-     * @param foodValue The amount of food gained.
+     * Make the snake eat prey.
+     * Only eats when very hungry (below 25% food level).
+     * 
+     * @param foodValue Amount of food (nutrition) to add.
      */
     protected void eat(int foodValue) {
         if (getFoodLevel() < getMaxFoodValue() / 4) { // Only eat when food level is below 25%
@@ -82,7 +94,7 @@ public class Snake extends Animal
     }
     
     /**
-     * Create a new bear.
+     * Create a new snake.
      * @param randomAge Whether to create a bear with random age or as a baby.
      * @param location Where to create the bear.
      * @param field The field to place the bear in.
