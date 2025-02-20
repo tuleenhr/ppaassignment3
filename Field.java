@@ -1,12 +1,12 @@
 import java.util.*;
 
 /**
- * Represent a rectangular grid of field positions.
- * Each position is able to store a single animal/object.
- * 
- * @author David J. Barnes and Michael Kölling
- * @version 7.0
- */
+*
+* Represent a rectangular grid of field positions.
+* Each position is able to store a single animal/object.
+* @author Hamed Latif & Tuleen Rowaihy
+* @version 20.02.25
+*/
 public class Field
 {
     // A random number generator for providing random locations.

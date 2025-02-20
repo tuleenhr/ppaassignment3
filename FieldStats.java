@@ -2,16 +2,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class collects and provides some statistical data on the state 
- * of a field. It is flexible: it will create and maintain a counter 
- * for any class of object that is found within the field.
- * 
- * @author David J. Barnes and Michael Kölling
- * @version 7.0
- */
+* This class collects and provides some statistical data on the state
+* of a field. It is flexible: it will create and maintain a counter
+* for any class of object that is found within the field.
+* @author Hamed Latif & Tuleen Rowaihy
+* @version 20.02.25
+*/
 public class FieldStats
 {
-    // Counters for each type of entity (fox, rabbit, etc.) in the simulation.
+    // Counters for each type of entity (bear, deer, etc.) in the simulation.
     private final Map<Class<?>, Counter> counters;
     // Whether the counters are currently up to date.
     private boolean countsValid;
@@ -162,5 +161,4 @@ public class FieldStats
         generateCounts(field);
         return infectedAnimalsCount;
     }
-
 }

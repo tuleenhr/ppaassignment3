@@ -1,9 +1,8 @@
 /**
  * Manages time progression in the simulation.
- * Handles day/night cycles and seasons.
- * 
- * @author (your name)
- * @version (a version number or a date)
+ * Handles day/night cycles and seasons, important for simulating realistic environmental changes.
+ * @author Hamed Latif & Tuleen Rowaihy
+ * @version 20.02.25
  */
 public class TimeKeeper
 {

@@ -1,12 +1,12 @@
 import java.util.*;
 
 /**
- * A simple predator-prey simulator, based on a rectangular field containing 
- * rabbits and foxes.
- * 
- * @author David J. Barnes and Michael Kölling
- * @version 7.1
- */
+*
+* A simple predator-prey simulator, based on a rectangular field containing
+* preys and predators.
+* @author Hamed Latif & Tuleen Rowaihy
+* @version 20.02.25
+*/
 public class Simulator
 {
     // Constants representing configuration information for the simulation.
